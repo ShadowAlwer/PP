@@ -2,9 +2,9 @@ package pp;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.view.Viewer;
 
@@ -18,9 +18,16 @@ public class Main {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    final DefaultGraph graph = new DefaultGraph("Graph");
-    graph.setStrict(false);
-    Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+    Jobs jobs = new Jobs();
+    
+    ArrayList<String> arr = new ArrayList();
+    arr.add("Job1");
+    jobs.addJob(null, 5, "Job1");    
+    jobs.addJob(arr, 10, "Job2");
+    jobs.addJob(arr, 15, "Job3");
+    
+    Viewer viewer = jobs.getViewer();
+
     JFrame myJFrame = new JFrame();
     myJFrame.setPreferredSize(new Dimension(600, 600));
 
@@ -38,13 +45,6 @@ public class Main {
     myJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     viewer.enableAutoLayout();
-
-    graph.addNode("A");
-    graph.addNode("B");
-    graph.addNode("C");
-    graph.addEdge("AB", "A", "B");
-    graph.addEdge("BC", "B", "C");
-    graph.addEdge("CA", "C", "A");
   }
 
 }
