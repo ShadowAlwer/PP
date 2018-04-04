@@ -19,8 +19,7 @@ public class Main {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-     //System.setProperty("graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
-     System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+    System.setProperty("graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
     Jobs jobs = new Jobs();
     
     ArrayList<String> arr = new ArrayList();
@@ -28,18 +27,10 @@ public class Main {
     jobs.addJob(null, 5, "Job1");    
     jobs.addJob(arr, 10, "Job2");
     jobs.addJob(arr, 15, "Job3");
-    //jobs.getGraph().addAttribute("ui.stylesheet", "graph { fill-color: red; }");
-    jobs.getGraph().addAttribute("ui.stylesheet", "url(C:\\Users\\Alex\\Documents\\Studia\\PP\\src\\CSS\\css.css)");
-//    jobs.getGraph().addAttribute("ui.stylesheet", "node#Job1 {\n" +
-//"        shape: box;\n" +
-//"        size: 15px, 20px;\n" +
-//"        fill-mode: plain;   /* Default.          */\n" +
-//"        fill-color: red;    /* Default is black. */\n" +
-//"        stroke-mode: plain; /* Default is none.  */\n" +
-//"        stroke-color: blue; /* Default is black. */\n" +
-//"    }");
-    for (Node node :jobs.getGraph()) {
-        node.addAttribute("ui.label", node.getNumber("number"));
+
+    jobs.getGraph().addAttribute("ui.stylesheet", "url(src/CSS/css.css)");
+    for (Node node : jobs.getGraph()) {
+      node.addAttribute("ui.label", node.getId());
     }
     Viewer viewer = jobs.getViewer();
 
