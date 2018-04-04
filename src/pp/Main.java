@@ -1,11 +1,14 @@
 package pp;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import org.graphstream.graph.Node;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.view.Viewer;
 
@@ -33,24 +36,17 @@ public class Main {
       node.addAttribute("ui.label", node.getId());
     }
     Viewer viewer = jobs.getViewer();
-
-    JFrame myJFrame = new JFrame();
-    myJFrame.setPreferredSize(new Dimension(600, 600));
-
     DefaultView view = (DefaultView) viewer.addDefaultView(false);
     view.setPreferredSize(new Dimension(400, 400));
-    myJFrame.setLayout(new FlowLayout());
-    myJFrame.add(view);
-
-    JButton myButton = new JButton("Button");
-    myButton.addActionListener(e -> System.out.println("Hello, World"));
-    myJFrame.add(myButton);
-
-    myJFrame.pack();
-    myJFrame.setVisible(true);
-    myJFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    
+    EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new MyFrame(view,jobs);
+            }
+        });
+    
     viewer.enableAutoLayout();
-  }
 
+  }
 }
