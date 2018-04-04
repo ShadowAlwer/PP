@@ -24,6 +24,7 @@ public class Main {
   public static void main(String[] args) {
     System.setProperty("graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
     Jobs jobs = new Jobs();
+    jobs.getGraph().addAttribute("ui.stylesheet", "url(src/CSS/css.css)");
     
     ArrayList<String> arr = new ArrayList();
     arr.add("Job1");
@@ -31,10 +32,6 @@ public class Main {
     jobs.addJob(arr, 10, "Job2");
     jobs.addJob(arr, 15, "Job3");
 
-    jobs.getGraph().addAttribute("ui.stylesheet", "url(src/CSS/css.css)");
-    for (Node node : jobs.getGraph()) {
-      node.addAttribute("ui.label", node.getId());
-    }
     Viewer viewer = jobs.getViewer();
     DefaultView view = (DefaultView) viewer.addDefaultView(false);
     view.setPreferredSize(new Dimension(400, 400));
