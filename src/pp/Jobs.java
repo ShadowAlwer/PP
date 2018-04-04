@@ -13,18 +13,18 @@ public class Jobs {
   private final DefaultGraph graph;
 
   public void addJob(ArrayList<String> deps, long execTime, String ID) {
-    ArrayList<Job> d = new ArrayList();
+    ArrayList<Job> dependencesList = new ArrayList();
     graph.addNode(ID);
     
     if (deps != null) {
       deps.forEach((id) -> {
-      d.add(graph.getNode(id).getAttribute("J"));
-      graph.addEdge(id + ID, ID, id, true);
+      dependencesList.add(graph.getNode(id).getAttribute("J"));
+      graph.addEdge(id + ID, id, ID, true);
     });
     }
     
-    Job job = new Job(d, execTime);
-    graph.getNode(ID).setAttribute("J", job);
+    Job job = new Job(dependencesList, execTime);
+   graph.getNode(ID).setAttribute("J", job);
     
     }
 
