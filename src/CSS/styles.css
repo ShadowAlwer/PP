@@ -1,0 +1,17 @@
+graph {
+    fill-color: #eff2ff;
+}
+
+node { 
+    fill-color: #dee;
+    size: 40px;
+    stroke-mode: plain;
+    stroke-color: black;
+    stroke-width: 1px;
+    text-size: 15px;
+}
+
+edge {
+    fill-color: #333;
+    arrow-size: 8px;
+}

@@ -22,9 +22,9 @@ public class Main {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    System.setProperty("graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+    System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
     Jobs jobs = new Jobs();
-    jobs.getGraph().addAttribute("ui.stylesheet", "url(src/CSS/css.css)");
+    jobs.getGraph().addAttribute("ui.stylesheet", "url(src/css/styles.css)");
     
     ArrayList<String> arr = new ArrayList();
     arr.add("Job1");
