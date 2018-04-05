@@ -50,8 +50,7 @@ public class MyFrame extends JFrame{
         
         
         
-        String[] items = {"One", "Two", "Three", "Four", "Five"};
-       JComboBox combo = new JComboBox(items);
+ 
         JTextField field1 = new JTextField("");
         JTextField field2 = new JTextField("");
         JPanel panel = new JPanel(new GridBagLayout());
