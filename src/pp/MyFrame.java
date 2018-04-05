@@ -44,6 +44,8 @@ public class MyFrame extends JFrame{
     JTextField fieldJobTime = new JTextField("");
     private JComboBox comboBoxFirstNode;
     private JComboBox comboBoxSecondNode;
+    private JPopupMenu menu;
+    private ArrayList<JMenuItem>  listOfCheckBox;
     public MyFrame(DefaultView view, Jobs jobs) {
         
         this.jobs=jobs;
@@ -150,8 +152,8 @@ public class MyFrame extends JFrame{
         c.gridy = 3;
         panel.add(new JLabel("Depends:"),c);
         
-        final JPopupMenu menu = new JPopupMenu();
-        ArrayList<JMenuItem> listOfCheckBox=new ArrayList<>();
+        menu = new JPopupMenu();
+        listOfCheckBox=new ArrayList<>();
         
         
          final JButton buttonMultipleChoice = new JButton("List of nodes");
@@ -207,6 +209,8 @@ public class MyFrame extends JFrame{
                 menu.add(item);
                 listOfCheckBox.add(item);
                 item.addActionListener(new OpenAction(menu, buttonMultipleChoice));
+                
+                
                 comboBoxToDelete.addItem(fieldJobName.getText());
                 comboBoxFirstNode.addItem(fieldJobName.getText());
                 comboBoxSecondNode.addItem(fieldJobName.getText());
@@ -256,6 +260,14 @@ public class MyFrame extends JFrame{
             public void actionPerformed(ActionEvent e) {
                
                 jobs.removeJob( (String) comboBoxToDelete.getSelectedItem());
+                
+                
+                menu.remove(comboBoxToDelete.getSelectedIndex());
+                listOfCheckBox.remove(comboBoxToDelete.getSelectedIndex());
+                
+                comboBoxFirstNode.removeItem(comboBoxToDelete.getSelectedItem());
+                comboBoxSecondNode.removeItem(comboBoxToDelete.getSelectedItem());
+                comboBoxToDelete.removeItem(comboBoxToDelete.getSelectedItem());
                 
             }
         });
