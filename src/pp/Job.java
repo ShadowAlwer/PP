@@ -23,4 +23,12 @@ public class Job {
     return this.executionTime;
   }
   
+  public void addDependency(Job job){
+   depends.add(job);    
+  }
+  
+  public void removeDependency(Job job){
+   depends.remove(job);
+  }
+  
 }
