@@ -69,18 +69,5 @@ public class Jobs {
   
       graph.removeEdge(dependencyID+jobID);
   }
-  
-
-    void removeJob(String string) {
-        
-    }
-
-    void addEdge(String string, String string0) {
-       
-    }
-
-    void removeEdge(String string, String string0) {
-       
-    }
 
 }

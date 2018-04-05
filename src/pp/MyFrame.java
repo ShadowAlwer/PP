@@ -303,7 +303,7 @@ public class MyFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                
-                jobs.addEdge((String) comboBoxFirstNode.getSelectedItem(),(String) comboBoxSecondNode.getSelectedItem());
+                jobs.addDependency((String) comboBoxFirstNode.getSelectedItem(),(String) comboBoxSecondNode.getSelectedItem());
                 
             }
         });
@@ -320,7 +320,7 @@ public class MyFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                
-                jobs.removeEdge((String) comboBoxFirstNode.getSelectedItem(),(String) comboBoxSecondNode.getSelectedItem());
+                jobs.removeDependency((String) comboBoxFirstNode.getSelectedItem(),(String) comboBoxSecondNode.getSelectedItem());
                 
             }
         });
