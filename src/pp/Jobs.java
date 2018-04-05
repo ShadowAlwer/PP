@@ -24,10 +24,18 @@ public class Jobs {
       });
     }
 
-    Job job = new Job(dependencesList, execTime);
+    Job job = new Job(dependencesList, execTime, ID);
     node.setAttribute("J", job);
     node.setAttribute("ui.label", node.getId());
 
+  }
+
+  public void removeJob(String ID) {
+    Job removed = graph.removeNode(ID).getAttribute("J");
+    for (Node node : graph) {
+      Job job = node.getAttribute("J");
+      job.getDepends().remove(removed);
+    }
   }
 
   public DefaultGraph getGraph() {
