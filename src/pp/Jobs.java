@@ -43,4 +43,16 @@ public class Jobs {
     return new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
   }
 
+    void removeJob(String string) {
+        
+    }
+
+    void addEdge(String string, String string0) {
+       
+    }
+
+    void removeEdge(String string, String string0) {
+       
+    }
+
 }
