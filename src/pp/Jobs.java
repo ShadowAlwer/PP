@@ -13,7 +13,10 @@ public class Jobs {
 
   private final DefaultGraph graph;
 
-  public void addJob(ArrayList<String> deps, long execTime, String ID) {
+  public boolean addJob(ArrayList<String> deps, long execTime, String ID) {
+    if (graph.getNode(ID) != null) {
+      return false;
+    }
     ArrayList<Job> dependencesList = new ArrayList();
     Node node = graph.addNode(ID);
 
@@ -28,6 +31,7 @@ public class Jobs {
     node.setAttribute("J", job);
     node.setAttribute("ui.label", node.getId());
 
+    return true;
   }
 
   public void removeJob(String ID) {
@@ -50,24 +54,29 @@ public class Jobs {
   public Viewer getViewer() {
     return new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
   }
-  
-  public void addDependency(String jobID, String dependencyID){
-  
-      Job job=graph.getNode(jobID).getAttribute("J");
-      Job dependency= graph.getNode(dependencyID).getAttribute("J");
-      job.addDependency(dependency);
-  
-      graph.addEdge(dependencyID+jobID, dependencyID, jobID,true);
-  }
-  
-  public void removeDependency(String jobID, String dependencyID){
-  
-      Job job=graph.getNode(jobID).getAttribute("J");
-      Job dependency= graph.getNode(dependencyID).getAttribute("J"); 
-      job.removeDependency(dependency);
 
-  
-      graph.removeEdge(dependencyID+jobID);
+  public boolean addDependency(String jobID, String dependencyID) {
+    if (jobID.equals(dependencyID)) {
+      return false;
+    }
+
+    Job job = graph.getNode(jobID).getAttribute("J");
+    Job dependency = graph.getNode(dependencyID).getAttribute("J");
+    if (job == null || dependency == null) {
+      return false;
+    }
+    job.addDependency(dependency);
+
+    graph.addEdge(dependencyID + jobID, dependencyID, jobID, true);
+    return true;
+  }
+
+  public void removeDependency(String jobID, String dependencyID) {
+    Job job = graph.getNode(jobID).getAttribute("J");
+    Job dependency = graph.getNode(dependencyID).getAttribute("J");
+    job.removeDependency(dependency);
+
+    graph.removeEdge(dependencyID + jobID);
   }
 
 }
