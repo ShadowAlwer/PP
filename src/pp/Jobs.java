@@ -50,5 +50,25 @@ public class Jobs {
   public Viewer getViewer() {
     return new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
   }
+  
+  public void addDependency(String jobID, String dependencyID){
+  
+      Job job=graph.getNode(jobID).getAttribute("J");
+      Job dependency= graph.getNode(dependencyID).getAttribute("J");
+      job.addDependency(dependency);
+  
+      graph.addEdge(dependencyID+jobID, dependencyID, jobID,true);
+  }
+  
+  public void removeDependency(String jobID, String dependencyID){
+  
+      Job job=graph.getNode(jobID).getAttribute("J");
+      Job dependency= graph.getNode(dependencyID).getAttribute("J"); 
+      job.removeDependency(dependency);
+
+  
+      graph.removeEdge(dependencyID+jobID);
+  }
+  
 
 }
