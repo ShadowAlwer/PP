@@ -71,4 +71,16 @@ public class Jobs {
   }
   
 
+    void removeJob(String string) {
+        
+    }
+
+    void addEdge(String string, String string0) {
+       
+    }
+
+    void removeEdge(String string, String string0) {
+       
+    }
+
 }
