@@ -28,10 +28,14 @@ public class Main {
     
     ArrayList<String> arr = new ArrayList();
     arr.add("Job1");
+    
     jobs.addJob(null, 5, "Job1");    
     jobs.addJob(arr, 10, "Job2");
     jobs.addJob(arr, 15, "Job3");
-
+    
+    jobs.addDependency("Job2","Job3");
+    jobs.removeDependency("Job2","Job3");
+    
     Viewer viewer = jobs.getViewer();
     DefaultView view = (DefaultView) viewer.addDefaultView(false);
     view.setPreferredSize(new Dimension(400, 400));

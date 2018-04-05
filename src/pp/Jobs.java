@@ -24,10 +24,18 @@ public class Jobs {
       });
     }
 
-    Job job = new Job(dependencesList, execTime);
+    Job job = new Job(dependencesList, execTime, ID);
     node.setAttribute("J", job);
     node.setAttribute("ui.label", node.getId());
 
+  }
+
+  public void removeJob(String ID) {
+    Job removed = graph.removeNode(ID).getAttribute("J");
+    for (Node node : graph) {
+      Job job = node.getAttribute("J");
+      job.getDepends().remove(removed);
+    }
   }
 
   public DefaultGraph getGraph() {
@@ -42,5 +50,25 @@ public class Jobs {
   public Viewer getViewer() {
     return new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
   }
+  
+  public void addDependency(String jobID, String dependencyID){
+  
+      Job job=graph.getNode(jobID).getAttribute("J");
+      Job dependency= graph.getNode(dependencyID).getAttribute("J");
+      job.addDependency(dependency);
+  
+      graph.addEdge(dependencyID+jobID, dependencyID, jobID,true);
+  }
+  
+  public void removeDependency(String jobID, String dependencyID){
+  
+      Job job=graph.getNode(jobID).getAttribute("J");
+      Job dependency= graph.getNode(dependencyID).getAttribute("J"); 
+      job.removeDependency(dependency);
+
+  
+      graph.removeEdge(dependencyID+jobID);
+  }
+  
 
 }
