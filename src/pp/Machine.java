@@ -25,6 +25,10 @@ public class Machine {
     workQueue = new ArrayList<Task>();
   }
 
+    public ArrayList<Task> getWorkQueue() {
+        return workQueue;
+    }
+
   public void addTask(Job job, long time) {
     workQueue.add(new Task(job, time));
   }

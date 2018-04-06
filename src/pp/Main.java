@@ -1,5 +1,6 @@
 package pp;
 
+import com.bluewares.BarChart;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -34,10 +35,26 @@ public class Main {
     DefaultView view = (DefaultView) viewer.addDefaultView(false);
     view.setPreferredSize(new Dimension(400, 400));
 
+    
+    
+    ArrayList<Machine> machines = new ArrayList<>();
+    Machine machine=new Machine();
+        machine.addTask(new Job(null, 5, "Job1"), 1);
+        machine.addTask(new Job(null, 3, "Job2"), 8);
+        machines.add(machine);
+      machine=new Machine();
+        machine.addTask(new Job(null, 3, "Job3"), 1);
+        machine.addTask(new Job(null, 4, "Job4"), 4);
+        machine.addTask(new Job(null, 4, "Job4"), 8);
+        machines.add(machine);
+    
+    
+    
+    
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
-        new MyFrame(view, jobs);
+        new MyFrame(view, jobs,machines);
       }
     });
 

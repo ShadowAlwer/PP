@@ -1,6 +1,11 @@
 package pp;
 
+import com.bluewares.Axis;
+import com.bluewares.Bar;
+import com.bluewares.BarChart;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,6 +13,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -17,6 +23,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swingViewer.DefaultView;
 
@@ -25,7 +32,7 @@ import org.graphstream.ui.swingViewer.DefaultView;
  * @author Kamil Sowa
  */
 public class MyFrame extends JFrame {
-
+  ArrayList<Machine> machines;
   Jobs jobs;
   JComboBox comboBoxToDelete;
   JTextField fieldJobName = new JTextField("");
@@ -34,16 +41,19 @@ public class MyFrame extends JFrame {
   private JComboBox comboBoxSecondNode;
   private JPopupMenu menu;
   private ArrayList<JMenuItem> listOfCheckBox;
+  private JFrame me=this;
 
-  public MyFrame(DefaultView view, Jobs jobs) {
+    public void setMachines(ArrayList<Machine> machines) {
+        this.machines = machines;
+    }
+
+  public MyFrame(DefaultView view, Jobs jobs, ArrayList<Machine> machines) {
 
     this.jobs = jobs;
-    setPreferredSize(new Dimension(1000, 1000));
+    this.machines=machines;
+    setPreferredSize(new Dimension(1400, 1000));
     setLayout(new BorderLayout());
     add(view, BorderLayout.LINE_START);
-    JButton myButton = new JButton("Button");
-    myButton.addActionListener(e -> System.out.println("Hello, World"));
-    add(myButton, BorderLayout.PAGE_END);
 
     JPanel panel3 = new JPanel(new GridBagLayout());
     JPanel panel4 = new JPanel(new GridBagLayout());
@@ -83,6 +93,52 @@ public class MyFrame extends JFrame {
     c.gridx = 0;
     c.gridy = 4;
     panel3.add(addNewEdge(), c);
+    
+    
+    
+
+   
+//    machines=new ArrayList<>();
+//    Machine machine=new Machine();
+//        machine.addTask(new Job(null, 5, "Job1"), 1);
+//        machine.addTask(new Job(null, 3, "Job2"), 8);
+//        machines.add(machine);
+//      machine=new Machine();
+//        machine.addTask(new Job(null, 3, "Job3"), 1);
+//        machine.addTask(new Job(null, 4, "Job4"), 4);
+//        machine.addTask(new Job(null, 4, "Job4"), 8);
+//        machines.add(machine);
+//     BarChart barChart=showBarCharts(machines);
+     //getContentPane().add(barChart, BorderLayout.CENTER);
+   
+    
+
+   final JButton prz = new JButton("Show graph");
+   
+    prz.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+         //Consumer<? super Machine> action=(x)->System.out.println(x.getEndTime());
+          
+         //machines.forEach(action);
+         BarChart barChart=showBarCharts(machines);
+         getContentPane().add(barChart, BorderLayout.CENTER);
+         SwingUtilities.updateComponentTreeUI(me);
+         
+      }
+    });
+    getContentPane().add(prz, BorderLayout.PAGE_END);
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
 
     getContentPane().add(panel3, BorderLayout.LINE_END);
     pack();
@@ -313,6 +369,41 @@ public class MyFrame extends JFrame {
     return panel;
 
   }
+
+    private BarChart showBarCharts(ArrayList<Machine> machines) {
+        
+         
+        ArrayList<ArrayList<Bar>> values = new ArrayList<ArrayList<Bar>>();
+        int i=0;
+        int j=0;
+        for (Machine machine1 : machines) {
+            values.add(new ArrayList<Bar>());
+            for (Machine.Task task : machine1.getWorkQueue()) {
+                Color color=(j%2==0)? Color.RED: Color.BLUE;
+                values.get(i).add(new Bar((int) task.job.getExecutionTime(),  color, task.job.getID(), (int) task.startTime));     
+                j++;
+            }
+            i++;
+            j=0;
+        }
+        
+        
+       
+//        values.add(new ArrayList<Bar>());
+//        values.get(0).add(new Bar(5, Color.RED, "Apple111111",1));
+//        values.get(0).add(new Bar(3, Color.BLUE, "Banana",8));
+    //    values.add(new ArrayList<>());
+    //    values.get(1).add(new Bar(67, Color.GREEN, "Plum11111111"));
+    //    values.get(1).add(new Bar(30, Color.ORANGE, "Radish"));
+
+        int primaryIncrements = 2; 
+        int secondaryIncrements = 1; 
+        int tertiaryIncrements = 1;
+        Axis yAxis = new Axis(15, 0, primaryIncrements, secondaryIncrements, 
+                             tertiaryIncrements, "Number of Fruits");
+
+        return new BarChart(values, yAxis);
+    }
 
   private static class OpenAction implements ActionListener {
 

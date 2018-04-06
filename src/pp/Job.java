@@ -18,6 +18,10 @@ public class Job {
     this.ID = id;
   }
 
+    public String getID() {
+        return ID;
+    }
+
   public ArrayList<Job> getDepends() {
     return this.depends;
   }
