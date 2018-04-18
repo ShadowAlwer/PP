@@ -12,7 +12,8 @@ import org.graphstream.ui.view.Viewer;
 public class Jobs {
 
   private final DefaultGraph graph;
-
+  private final ArrayList<Job> jobs;
+  
   public boolean addJob(ArrayList<String> deps, long execTime, String ID) {
     if (graph.getNode(ID) != null) {
       return false;
@@ -29,13 +30,33 @@ public class Jobs {
 
     Job job = new Job(dependencesList, execTime, ID);
     node.setAttribute("J", job);
-    node.setAttribute("ui.label", node.getId());
+    node.setAttribute("ui.label", node.getId()); 
+    
+    
+    dependencesList.clear();
+    if (deps != null) {
+      deps.forEach((id) -> {
+          for(Job j: jobs )
+              if(j.getID().equals(id))
+                dependencesList.add(j);
 
+      });
+    }
+    job=  new Job(dependencesList, execTime, ID);
+    jobs.add(job);
+    
     return true;
   }
 
   public void removeJob(String ID) {
-    Job removed = graph.removeNode(ID).getAttribute("J");
+    Job removed = graph.removeNode(ID).getAttribute("J"); 
+    
+    for(Job job:jobs){
+        if(job.getID().equals(ID)){
+            jobs.remove(job);
+        }
+    }
+    
     for (Node node : graph) {
       Job job = node.getAttribute("J");
       job.getDepends().remove(removed);
@@ -49,6 +70,7 @@ public class Jobs {
   public Jobs() {
     this.graph = new DefaultGraph("Graph");
     graph.setStrict(false);
+    jobs= new ArrayList<Job>();
   }
 
   public Viewer getViewer() {
@@ -68,6 +90,23 @@ public class Jobs {
     job.addDependency(dependency);
 
     graph.addEdge(dependencyID + jobID, dependencyID, jobID, true);
+    
+    for(Job j:jobs){
+        if(j.getID().equals(dependencyID)){
+            dependency=j;
+            break;
+        }
+    }
+    
+    for(Job j:jobs){
+        if(j.getID().equals(jobID)){
+            j.addDependency(dependency);
+            break;
+        }
+    }
+    
+    
+    
     return true;
   }
 
@@ -77,6 +116,26 @@ public class Jobs {
     job.removeDependency(dependency);
 
     graph.removeEdge(dependencyID + jobID);
+    
+     for(Job j:jobs){
+        if(j.getID().equals(dependencyID)){
+            dependency=j;
+            break;
+        }
+    }
+    
+    for(Job j:jobs){
+        if(j.getID().equals(jobID)){
+            j.removeDependency(dependency);
+            break;
+        }
+    }
+       
+    
   }
+  
+  public ArrayList<Job> getJobs(){
+           return jobs;
+    }
 
 }
