@@ -25,8 +25,10 @@ public class Main {
     arr.add("Job1");
 
     jobs.addJob(null, 5, "Job1");
-    jobs.addJob(arr, 10, "Job2"); 
-    jobs.addJob(arr, 15, "Job3");
+    jobs.addJob(arr, 2, "Job2"); 
+    jobs.addJob(arr, 3, "Job3");
+    jobs.addJob(null, 1, "Job4");
+    jobs.addJob(arr, 6, "Job5");
 
     jobs.addDependency("Job2", "Job3");
     jobs.removeDependency("Job2", "Job3");
@@ -39,16 +41,14 @@ public class Main {
     
     ArrayList<Machine> machines = new ArrayList<>();
     Machine machine=new Machine();
-        machine.addTask(new Job(null, 5, "Job1"), 1);
-        machine.addTask(new Job(null, 3, "Job2"), 8);
         machines.add(machine);
-      machine=new Machine();
-        machine.addTask(new Job(null, 3, "Job3"), 1);
-        machine.addTask(new Job(null, 4, "Job4"), 4);
-        machine.addTask(new Job(null, 4, "Job4"), 8);
+        machine=new Machine();
         machines.add(machine);
-    
-    
+        machine=new Machine();
+        machines.add(machine);
+        Scheduler sheduler= new Scheduler();
+        sheduler.simpleAlgorithm(jobs, machines);
+          
     
     
     EventQueue.invokeLater(new Runnable() {
