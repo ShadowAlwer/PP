@@ -91,7 +91,6 @@ public class MyFrame extends JFrame {
         c.gridy = 3;
         panel3.add(panelX2, c);
 
-        
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
@@ -143,9 +142,9 @@ public class MyFrame extends JFrame {
 
             private Axis setAxis(long height) {
                 height += 2;
-                int primaryIncrements = (int) (height / NUMBER_OF_TICKS) +1;
-                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2)+1;
-                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2)+1;
+                int primaryIncrements = (int) (height / NUMBER_OF_TICKS) + 1;
+                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2) + 1;
+                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2) + 1;
                 Axis yAxis = new Axis((int) height, 0, primaryIncrements, secondaryIncrements,
                         tertiaryIncrements);
                 return yAxis;
@@ -172,15 +171,13 @@ public class MyFrame extends JFrame {
         });
         getContentPane().add(prz, BorderLayout.PAGE_END);
 
-        
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
         c.gridy = 6;
         panel3.add(setMachinesNumberInScheduler(), c);
         scheduler.simpleAlgorithm();
-        
-        
+
         getContentPane().add(showGraphButtonTask(), BorderLayout.PAGE_END);
         getContentPane().add(panel3, BorderLayout.LINE_END);
         pack();
@@ -328,7 +325,7 @@ public class MyFrame extends JFrame {
         for (Node node : jobs.getGraph()) {
             jobsNames.add(node.getId());
         }
-        
+
         comboBoxToDelete = new JComboBox<String>(jobsNames.toArray(new String[jobsNames.size()]));
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.SOUTH;
@@ -382,10 +379,8 @@ public class MyFrame extends JFrame {
             jobsNames.add(node.getId());
         }
 
-        
-        
-       // Arrays.copyOf(jobs.getGraph(), jobsNames.size(), String[].class);
-        comboBoxFirstNode=new JComboBox<String>( jobsNames.toArray(new String[jobsNames.size()]));
+        // Arrays.copyOf(jobs.getGraph(), jobsNames.size(), String[].class);
+        comboBoxFirstNode = new JComboBox<String>(jobsNames.toArray(new String[jobsNames.size()]));
         comboBoxSecondNode = new JComboBox<String>(jobsNames.toArray(new String[jobsNames.size()]));
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.LINE_START;
@@ -560,18 +555,18 @@ public class MyFrame extends JFrame {
         c.gridwidth = 1;
         c.gridy = 1;
         panel.add(fieldNumberOfMachines, c);
-        
-        
+
         final JButton buttonSetNumberOfMachines = new JButton("Submit");
         buttonSetNumberOfMachines.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try{
-                    if (Integer.parseInt(fieldNumberOfMachines.getText())>10 || Integer.parseInt(fieldNumberOfMachines.getText())<1)
+                try {
+                    if (Integer.parseInt(fieldNumberOfMachines.getText()) > 10 || Integer.parseInt(fieldNumberOfMachines.getText()) < 1) {
                         throw new NumberFormatException();
+                    }
                     scheduler.setMachinesCount(Integer.parseInt(fieldNumberOfMachines.getText()));
-                    
-                }catch (NumberFormatException ex) {
+
+                } catch (NumberFormatException ex) {
                     System.err.println("NumberFormatException " + ex.getMessage());
 
                     JOptionPane.showMessageDialog(me,
@@ -590,12 +585,7 @@ public class MyFrame extends JFrame {
         c.gridwidth = 2;
         c.gridy = 2;
         panel.add(buttonSetNumberOfMachines, c);
-        
-        
-        
-        
-        
-        
+
         return panel;
     }
 
