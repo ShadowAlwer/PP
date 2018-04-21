@@ -14,7 +14,9 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -38,11 +40,11 @@ public class MyFrame extends JFrame {
 
     private Scheduler scheduler;
     Jobs jobs;
-    JComboBox comboBoxToDelete;
+    JComboBox<String> comboBoxToDelete;
     JTextField fieldJobName = new JTextField("");
     JTextField fieldJobTime = new JTextField("");
-    private JComboBox comboBoxFirstNode;
-    private JComboBox comboBoxSecondNode;
+    private JComboBox<String> comboBoxFirstNode;
+    private JComboBox<String> comboBoxSecondNode;
     private JPopupMenu menu;
     private ArrayList<JMenuItem> listOfCheckBox;
     private JFrame me = this;
@@ -131,9 +133,9 @@ public class MyFrame extends JFrame {
 
             private Axis setAxis(long height) {
                 height += 2;
-                int primaryIncrements = (int) (height / NUMBER_OF_TICKS);
-                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
-                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
+                int primaryIncrements = (int) (height / NUMBER_OF_TICKS) +1;
+                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2)+1;
+                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2)+1;
                 Axis yAxis = new Axis((int) height, 0, primaryIncrements, secondaryIncrements,
                         tertiaryIncrements);
                 return yAxis;
@@ -306,7 +308,8 @@ public class MyFrame extends JFrame {
         for (Node node : jobs.getGraph()) {
             jobsNames.add(node.getId());
         }
-        comboBoxToDelete = new JComboBox(jobsNames.toArray());
+        
+        comboBoxToDelete = new JComboBox<String>(jobsNames.toArray(new String[jobsNames.size()]));
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
@@ -358,8 +361,12 @@ public class MyFrame extends JFrame {
         for (Node node : jobs.getGraph()) {
             jobsNames.add(node.getId());
         }
-        comboBoxFirstNode = new JComboBox(jobsNames.toArray());
-        comboBoxSecondNode = new JComboBox(jobsNames.toArray());
+
+        
+        
+       // Arrays.copyOf(jobs.getGraph(), jobsNames.size(), String[].class);
+        comboBoxFirstNode=new JComboBox<String>( jobsNames.toArray(new String[jobsNames.size()]));
+        comboBoxSecondNode = new JComboBox<String>(jobsNames.toArray(new String[jobsNames.size()]));
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.LINE_START;
         c.weightx = 0.5;
