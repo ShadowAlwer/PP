@@ -41,14 +41,7 @@ public class Jobs {
         Job removed = findJobByID(ID);
         graph.removeNode(ID);
         jobs.remove(removed);
-
-        for (Job job : jobs) {
-            ArrayList deps = job.getDepends();
-            int index = deps.indexOf(removed);
-            if (index != -1) {
-                deps.remove(index);
-            }
-        }
+        jobs.forEach((job) -> job.getDepends().remove(removed));
     }
 
     public DefaultGraph getGraph() {

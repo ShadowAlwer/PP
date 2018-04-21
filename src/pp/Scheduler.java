@@ -8,40 +8,45 @@ import java.util.Iterator;
  * @author Alex
  */
 public class Scheduler {
-
+    
+    private final ArrayList<Machine> machines;
+    private final ArrayList<Job> jobs;
+    
     class ScheduledJob {
-
+        
         public Job job;
         public long endTime;
-
+        
         public ScheduledJob(Job j, long end) {
             this.job = j;
             endTime = end;
         }
-
-    };
-
-    public ArrayList<Machine> simpleAlgorithm(Jobs jobs, int amountOfMachines) {
-        ArrayList<Machine> machines = new ArrayList<>();
         
+    };
+    
+    public Scheduler(ArrayList<Job> jobs, int amountOfMachines) {
+        this.jobs = jobs;
+        machines = new ArrayList<>();
         for (int i = 0; i < amountOfMachines; ++i) {
             machines.add(new Machine());
         }
-        
+    }
+    
+    public void simpleAlgorithm() {
+        machines.stream().forEach((machine) -> machine.getWorkQueue().clear());
         ArrayList<Job> queue = new ArrayList<>();
-        //jobs.getJobs().toArray(queue);
         ArrayList<ScheduledJob> scheduledJobs = new ArrayList<>();
         Iterator<Machine> machineIter = machines.iterator();
-
-        for (Job j : jobs.getJobs()) {
+        
+        for (Job j : jobs) {
             if (j.getDepends().isEmpty()) {
                 queue.add(j);
             }
         }
-
-        while (queue.size() < jobs.getJobs().size()) {
-
-            for (Job j : jobs.getJobs()) {
+        
+        while (queue.size() < jobs.size()) {
+            
+            for (Job j : jobs) {
                 boolean toQueue = true;
                 if (!j.getDepends().isEmpty()) {
                     for (Job dep : j.getDepends()) {
@@ -56,8 +61,7 @@ public class Scheduler {
                 }
             }
         }
-        System.out.println("Hello");
-
+        
         Machine tmp;
         long endTime;
         for (Job j : queue) {
@@ -87,6 +91,9 @@ public class Scheduler {
                 }
             }
         }
-        return machines;
+    }
+    
+    public ArrayList<Machine> getMachines() {
+        return this.machines;
     }
 }

@@ -36,8 +36,7 @@ import static pp.ConstansInterface.NUMBER_OF_TICKS;
  */
 public class MyFrame extends JFrame {
 
-    ArrayList<Machine> machines;
-    private Scheduler scheduler = new Scheduler();
+    private Scheduler scheduler;
     Jobs jobs;
     JComboBox comboBoxToDelete;
     JTextField fieldJobName = new JTextField("");
@@ -49,14 +48,9 @@ public class MyFrame extends JFrame {
     private JFrame me = this;
     private BarChart barChart;
 
-//    public void setMachines(ArrayList<Machine> machines) {
-//        this.machines = machines;
-//    }
-
     public MyFrame(DefaultView view, Jobs jobs) {
-
         this.jobs = jobs;
-//        this.machines = machines;
+        this.scheduler = new Scheduler(jobs.getJobs(), 3);
         setPreferredSize(new Dimension(1500, 1000));
         setLayout(new BorderLayout());
         add(view, BorderLayout.LINE_START);
@@ -99,8 +93,8 @@ public class MyFrame extends JFrame {
         c.gridx = 0;
         c.gridy = 4;
         panel3.add(addNewEdge(), c);
-        machines = scheduler.simpleAlgorithm(jobs, 3);
-        barChart = showBarCharts(machines);
+        scheduler.simpleAlgorithm();
+        barChart = showBarCharts(scheduler.getMachines());
         //getContentPane().add(barChart, BorderLayout.CENTER);
 
         final JButton prz = new JButton("Show graph");
@@ -108,9 +102,9 @@ public class MyFrame extends JFrame {
         prz.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                machines = scheduler.simpleAlgorithm(jobs, 3);
-                barChart.setBars(getValuesFromMachines(machines));
-                long height = calculateNeededHeightofYAxis(machines);
+                scheduler.simpleAlgorithm();
+                barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
+                long height = calculateNeededHeightofYAxis(scheduler.getMachines());
                 barChart.setyAxis(setAxis(height));
                 barChart.repaint();
                 getContentPane().add(barChart, BorderLayout.CENTER);
