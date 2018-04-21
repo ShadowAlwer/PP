@@ -39,10 +39,10 @@ import static pp.ConstansInterface.NUMBER_OF_TICKS;
 public class MyFrame extends JFrame {
 
     private Scheduler scheduler;
-    Jobs jobs;
-    JComboBox<String> comboBoxToDelete;
-    JTextField fieldJobName = new JTextField("");
-    JTextField fieldJobTime = new JTextField("");
+    private Jobs jobs;
+    private JComboBox<String> comboBoxToDelete;
+    private JTextField fieldJobName = new JTextField("");
+    private JTextField fieldJobTime = new JTextField("");
     private JComboBox<String> comboBoxFirstNode;
     private JComboBox<String> comboBoxSecondNode;
     private JPopupMenu menu;
