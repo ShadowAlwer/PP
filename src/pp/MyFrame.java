@@ -43,6 +43,7 @@ public class MyFrame extends JFrame {
     private JComboBox<String> comboBoxToDelete;
     private JTextField fieldJobName = new JTextField("");
     private JTextField fieldJobTime = new JTextField("");
+    private JTextField fieldNumberOfMachines = new JTextField("");
     private JComboBox<String> comboBoxFirstNode;
     private JComboBox<String> comboBoxSecondNode;
     private JPopupMenu menu;
@@ -60,8 +61,8 @@ public class MyFrame extends JFrame {
         JPanel panel3 = new JPanel(new GridBagLayout());
         JPanel panel4 = new JPanel(new GridBagLayout());
         JPanel panelX1 = new JPanel(new GridBagLayout());
-
         JPanel panelX2 = new JPanel(new GridBagLayout());
+        JPanel panelX3 = new JPanel(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.LINE_END;
@@ -90,12 +91,21 @@ public class MyFrame extends JFrame {
         c.gridy = 3;
         panel3.add(panelX2, c);
 
+        
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
         c.gridy = 4;
         panel3.add(addNewEdge(), c);
         scheduler.simpleAlgorithm();
+
+        panelX3.add(new JLabel("--------------------------------------------------------"));
+        c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 5;
+        panel3.add(panelX3, c);
+        //
         barChart = showBarCharts(scheduler.getMachines());
         //getContentPane().add(barChart, BorderLayout.CENTER);
 
@@ -162,6 +172,16 @@ public class MyFrame extends JFrame {
         });
         getContentPane().add(prz, BorderLayout.PAGE_END);
 
+        
+        c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 6;
+        panel3.add(setMachinesNumberInScheduler(), c);
+        scheduler.simpleAlgorithm();
+        
+        
+        getContentPane().add(showGraphButtonTask(), BorderLayout.PAGE_END);
         getContentPane().add(panel3, BorderLayout.LINE_END);
         pack();
         setVisible(true);
@@ -453,6 +473,130 @@ public class MyFrame extends JFrame {
         jLabel.setText(remove_Node_);
         jLabel.setFont(new Font("Callibri", Font.PLAIN, i));
         return jLabel;
+    }
+
+    private JButton showGraphButtonTask() {
+        barChart = showBarCharts(scheduler.getMachines());
+        //getContentPane().add(barChart, BorderLayout.CENTER);
+
+        final JButton prz = new JButton("Show graph");
+        prz.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                scheduler.simpleAlgorithm();
+                barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
+                long height = calculateNeededHeightofYAxis(scheduler.getMachines());
+                barChart.setyAxis(setAxis(height));
+                barChart.repaint();
+                getContentPane().add(barChart, BorderLayout.CENTER);
+                SwingUtilities.updateComponentTreeUI(me);
+
+            }
+
+            private ArrayList<ArrayList<Bar>> getValuesFromMachines(ArrayList<Machine> machines) {
+                ArrayList<ArrayList<Bar>> values = new ArrayList<ArrayList<Bar>>();
+                int i = 0;
+                int j = 0;
+                for (Machine machine1 : machines) {
+                    values.add(new ArrayList<Bar>());
+                    for (Machine.Task task : machine1.getWorkQueue()) {
+                        Color color = (j % 2 == 0) ? Color.RED : Color.BLUE;
+                        values.get(i).add(new Bar((int) task.job.getExecutionTime(), color, task.job.getID(), (int) task.startTime));
+                        j++;
+                    }
+                    i++;
+                    j = 0;
+                }
+                return values;
+            }
+
+            private Axis setAxis(long height) {
+                height += 2;
+                int primaryIncrements = (int) (height / NUMBER_OF_TICKS);
+                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
+                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
+                Axis yAxis = new Axis((int) height, 0, primaryIncrements, secondaryIncrements,
+                        tertiaryIncrements);
+                return yAxis;
+            }
+
+            private long calculateNeededHeightofYAxis(ArrayList<Machine> machines) {
+
+                Comparator<? super Machine> comparator = (Machine o1, Machine o2) -> {
+                    if (o1.getEndTime() < o2.getEndTime()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                };
+
+                return machines
+                        .stream()
+                        .max(comparator)
+                        .get()
+                        .getEndTime();
+
+            }
+
+        });
+        return prz;
+    }
+
+    private Component setMachinesNumberInScheduler() {
+        fieldNumberOfMachines = new JTextField("");
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        panel.add(newLabelWithFont("Write number of machines: ", 18), c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 1;
+        c.gridy = 1;
+        panel.add(fieldNumberOfMachines, c);
+        
+        
+        final JButton buttonSetNumberOfMachines = new JButton("Submit");
+        buttonSetNumberOfMachines.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    if (Integer.parseInt(fieldNumberOfMachines.getText())>10 || Integer.parseInt(fieldNumberOfMachines.getText())<1)
+                        throw new NumberFormatException();
+                    scheduler.setMachinesCount(Integer.parseInt(fieldNumberOfMachines.getText()));
+                    
+                }catch (NumberFormatException ex) {
+                    System.err.println("NumberFormatException " + ex.getMessage());
+
+                    JOptionPane.showMessageDialog(me,
+                            "Machine count must be a number from 1 to 10 ",
+                            "Inane error",
+                            JOptionPane.ERROR_MESSAGE);
+
+                }
+
+            }
+        });
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.gridy = 2;
+        panel.add(buttonSetNumberOfMachines, c);
+        
+        
+        
+        
+        
+        
+        return panel;
     }
 
     private static class OpenAction implements ActionListener {
