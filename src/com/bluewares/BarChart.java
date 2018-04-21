@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.bluewares;
 
 import java.awt.Color;
@@ -66,7 +61,7 @@ public class BarChart extends JPanel {
      * @param bars a number of bars to display
      * @param yAxis Axis object describes how to display y Axis
      */
-    public BarChart(ArrayList bars, Axis yAxis) {
+    public BarChart(ArrayList<ArrayList<Bar>> bars, Axis yAxis) {
         this.bars = bars;
         this.yAxis = yAxis;
     }
@@ -267,7 +262,6 @@ public class BarChart extends JPanel {
         System.out.println("titleY " + titleY);
         System.out.println("topOffset " + topOffset);
 
-        
         g2d.drawString(title, titleX, titleY);
         pla++;
     }

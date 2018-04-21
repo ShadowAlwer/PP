@@ -8,5 +8,5 @@ import java.util.ArrayList;
  */
 public class Simulation {
 
-  private ArrayList<Machine> machines;
+    private ArrayList<Machine> machines;
 }

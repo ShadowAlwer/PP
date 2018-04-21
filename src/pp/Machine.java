@@ -8,36 +8,36 @@ import java.util.ArrayList;
  */
 public class Machine {
 
-  class Task {
+    class Task {
 
-    public final Job job;
-    public final long startTime;
+        public final Job job;
+        public final long startTime;
 
-    Task(Job j, long s) {
-      this.job = j;
-      this.startTime = s;
+        Task(Job j, long s) {
+            this.job = j;
+            this.startTime = s;
+        }
     }
-  }
 
-  private final ArrayList<Task> workQueue;
+    private final ArrayList<Task> workQueue;
 
-  Machine() {
-    workQueue = new ArrayList<Task>();
-  }
+    Machine() {
+        workQueue = new ArrayList<>();
+    }
 
     public ArrayList<Task> getWorkQueue() {
         return workQueue;
     }
 
-  public void addTask(Job job, long time) {
-    workQueue.add(new Task(job, time));
-  }
-
-  public long getEndTime() {
-    if (workQueue.isEmpty()) {
-      return 0;
+    public void addTask(Job job, long time) {
+        workQueue.add(new Task(job, time));
     }
-    Task last = workQueue.get(workQueue.size() - 1);
-    return last.startTime + last.job.getExecutionTime();
-  }
+
+    public long getEndTime() {
+        if (workQueue.isEmpty()) {
+            return 0;
+        }
+        Task last = workQueue.get(workQueue.size() - 1);
+        return last.startTime + last.job.getExecutionTime();
+    }
 }

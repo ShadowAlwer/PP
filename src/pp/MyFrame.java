@@ -3,7 +3,6 @@ package pp;
 import com.bluewares.Axis;
 import com.bluewares.Bar;
 import com.bluewares.BarChart;
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -39,7 +37,7 @@ import static pp.ConstansInterface.NUMBER_OF_TICKS;
 public class MyFrame extends JFrame {
 
     ArrayList<Machine> machines;
-    
+
     Jobs jobs;
     JComboBox comboBoxToDelete;
     JTextField fieldJobName = new JTextField("");
@@ -148,10 +146,10 @@ public class MyFrame extends JFrame {
             }
 
             private Axis setAxis(long height) {
-                height+=2;
-                int primaryIncrements = (int) (height/NUMBER_OF_TICKS);
-                int secondaryIncrements = (int) (height/NUMBER_OF_TICKS*2);
-                int tertiaryIncrements = (int) (height/NUMBER_OF_TICKS*2);
+                height += 2;
+                int primaryIncrements = (int) (height / NUMBER_OF_TICKS);
+                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
+                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
                 Axis yAxis = new Axis((int) height, 0, primaryIncrements, secondaryIncrements,
                         tertiaryIncrements);
                 return yAxis;
@@ -289,13 +287,10 @@ public class MyFrame extends JFrame {
                             "Job time must be a long number for example:1 ",
                             "Inane error",
                             JOptionPane.ERROR_MESSAGE);
-                    
-                }finally{
-                     deps.clear();
+
+                } finally {
+                    deps.clear();
                 }
-
-
-                
 
             }
         });
