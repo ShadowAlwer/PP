@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.bluewares;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -13,149 +14,161 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import javax.swing.JPanel;
+
 /**
  *
  * @author Kamil Sowa
  */
 public class BarChart extends JPanel {
- 
+
     //offsets (padding of actual chart to its border)
     int leftOffset = 140;
     int topOffset = 120;
     int bottomOffset = 100;
     int rightOffset = 15;
- 
+    int pla = 0;
+
     //height of X labels (must be significantly smaller than bottomOffset)
-    int xLabelOffset = 40; 
+    int xLabelOffset = 40;
     //width of Y labels (must be significantly smaller than leftOffset)
-    int yLabelOffset = 40; 
- 
+    int yLabelOffset = 40;
+
     //tick widths
-    int majorTickWidth = 10;
+    int majorTickWidth = 650;
     int secTickWidth = 5;
     int minorTickWidth = 2;
- 
-    String xAxis = "X Axis";
-    String yAxisStr = "Y Axis";
-    String title = "My Fruits";
- 
+
+    String xAxisStr = "Machines";
+    String yAxisStr = "Time";
+    String title = "Jobs time for machines Graph";
+
     int width = 800; //total width of the component
     int height = 630; //total height of the component
- 
+
     Color textColor = Color.BLACK;
     Color backgroundColor = Color.WHITE;
- 
+
     Font textFont = new Font("Arial", Font.BOLD, 20);
-    Font yFont = new Font("Arial", Font.PLAIN, 12);
-    Font xFont = new Font("Arial", Font.BOLD, 12);
+    Font yFont = new Font("Arial", Font.BOLD, 18);
+    Font xFont = new Font("Arial", Font.BOLD, 18);
     Font titleFont = new Font("Arial", Font.BOLD, 18);
- 
+
     Font yCatFont = new Font("Arial", Font.BOLD, 12);
     Font xCatFont = new Font("Arial", Font.BOLD, 12);
- 
+
     ArrayList<ArrayList<Bar>> bars;
     Axis yAxis;
     int barWidth = 30;
- 
+
     /**
      * Construct BarChart
-     * 
+     *
      * @param bars a number of bars to display
-     * @param yAxis Axis object describes how to display y Axis 
+     * @param yAxis Axis object describes how to display y Axis
      */
     public BarChart(ArrayList bars, Axis yAxis) {
         this.bars = bars;
         this.yAxis = yAxis;
-        this.yAxisStr = yAxis.yLabel;
     }
- 
+
+    public void setBars(ArrayList<ArrayList<Bar>> bars) {
+        this.bars = bars;
+    }
+
+    public void setyAxis(Axis yAxis) {
+        this.yAxis = yAxis;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
- 
+
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
                 RenderingHints.VALUE_ANTIALIAS_ON);
- 
+
         g.drawRect(0, 0, width, height);
         g2d.setColor(backgroundColor);
         g.fillRect(0, 0, width, height);
         g2d.setColor(Color.BLACK);
- 
+
         int heightChart = height - (topOffset + bottomOffset);
         int widthChart = width - (leftOffset + rightOffset);
- 
+
         //left
         g.drawLine(leftOffset, topOffset, leftOffset, heightChart + topOffset);
- 
+
         //bottom
         g.drawLine(leftOffset, heightChart + topOffset, leftOffset + widthChart, heightChart + topOffset);
- 
-        if (this.yAxis.primaryIncrements != 0)
+
+        if (this.yAxis.primaryIncrements != 0) {
             drawTick(heightChart, this.yAxis.primaryIncrements, g, Color.BLACK, majorTickWidth);
-        if (this.yAxis.secondaryIncrements != 0)
+        }
+        if (this.yAxis.secondaryIncrements != 0) {
             drawTick(heightChart, this.yAxis.secondaryIncrements, g, Color.BLACK, secTickWidth);
-        if (this.yAxis.tertiaryIncrements != 0)
+        }
+        if (this.yAxis.tertiaryIncrements != 0) {
             drawTick(heightChart, this.yAxis.tertiaryIncrements, g, Color.BLACK, minorTickWidth);
- 
+        }
+
         drawYLabels(heightChart, this.yAxis.primaryIncrements, g, Color.BLACK);
- 
+
         drawBars(heightChart, widthChart, g);
- 
+
         drawLabels(heightChart, widthChart, g);
     }
- 
+
     private void drawTick(int heightChart, int increment, Graphics g, Color c, int tickWidth) {
- 
+
         int incrementNo = yAxis.maxValue / increment;
- 
+
         double factor = ((double) heightChart / (double) yAxis.maxValue);
- 
+
         double incrementInPixel = (double) (increment * factor);
- 
+
         g.setColor(c);
- 
+
         for (int i = 0; i < incrementNo; i++) {
             int fromTop = heightChart + topOffset - (int) (i * incrementInPixel);
             g.drawLine(leftOffset, fromTop, leftOffset + tickWidth, fromTop);
         }
     }
- 
+
     private void drawYLabels(int heightChart, int increment, Graphics g, Color c) {
- 
+
         int incrementNo = yAxis.maxValue / increment;
- 
+
         double factor = ((double) heightChart / (double) yAxis.maxValue);
- 
+
         int incrementInPixel = (int) (increment * factor);
- 
+
         g.setColor(c);
         FontMetrics fm = getFontMetrics(yCatFont);
- 
+
         for (int i = 0; i < incrementNo; i++) {
             int fromTop = heightChart + topOffset - (i * incrementInPixel);
- 
+
             String yLabel = "" + (i * increment);
- 
+
             int widthStr = fm.stringWidth(yLabel);
             int heightStr = fm.getHeight();
- 
+
             g.setFont(yCatFont);
-            g.drawString(yLabel, (leftOffset - yLabelOffset) + (yLabelOffset/2 - widthStr/2), fromTop + (heightStr / 2));
+            g.drawString(yLabel, (leftOffset - yLabelOffset) + (yLabelOffset / 2 - widthStr / 2), fromTop + (heightStr / 2));
         }
     }
- 
+
     private void drawBars(int heightChart, int widthChart, Graphics g) {
- 
+
         int i = 0;
         int barNumber = bars.size();
-        int j=0;
+        int j = 0;
         int pointDistance = (int) (widthChart / (barNumber + 1));
-        int counter=0;
-        int lastheight=0;
+        int counter = 0;
+        int lastheight = 0;
         for (ArrayList<Bar> bar1 : bars) {
             i++;
             for (Bar bar : bar1) {
-                 
+
                 double factor = ((double) heightChart / (double) yAxis.maxValue);
 
                 int scaledBarHeight = (int) (bar.value * factor);
@@ -163,13 +176,12 @@ public class BarChart extends JPanel {
 
                 j = topOffset + heightChart - scaledBarHeight;
 
-               // if (counter>0)
-                   // j-=lastheight;
+                // if (counter>0)
+                // j-=lastheight;
                 //lastheight=scaledBarHeight;
-
                 g.setColor(bar.color);
                 //x, y , szerokosc, wysokosc
-                 g.drawRect(leftOffset + (i * pointDistance) - (barWidth / 2), j-scaledBarStartHeight, barWidth, scaledBarHeight);
+                g.drawRect(leftOffset + (i * pointDistance) - (barWidth / 2), j - scaledBarStartHeight, barWidth, scaledBarHeight);
                 //g.fillRect(leftOffset + (i * pointDistance) - (barWidth / 2), j, barWidth, scaledBarHeight);
 
                 //draw tick
@@ -185,76 +197,78 @@ public class BarChart extends JPanel {
                 g.setFont(xCatFont);
                 g.setColor(Color.BLACK);
 
-                int xPosition =leftOffset + (i * pointDistance) - (widthStr / 2);
-                int yPosition = topOffset + heightChart + xLabelOffset - heightStr/2;
+                int xPosition = leftOffset + (i * pointDistance) - (widthStr / 2);
+                int yPosition = topOffset + heightChart + xLabelOffset - heightStr / 2;
 
                 //draw tick
                 //tu jest opis baru
-                g.drawString(bar.name,leftOffset + (i * pointDistance) - (barWidth / 2), j-scaledBarStartHeight+scaledBarHeight/2);
+                g.drawString(bar.name, leftOffset + (i * pointDistance) - (barWidth / 2), j - scaledBarStartHeight + scaledBarHeight / 2);
                 //g.drawString(bar.name, xPosition, yPosition);
                 counter++;
-            
+
             }
-            counter=0;
+            counter = 0;
         }
-        
-        
+
     }
- 
+
     private void drawLabels(int heightChart, int widthChart, Graphics g) {
- 
-        Graphics2D g2d = (Graphics2D)g;
- 
+
+        Graphics2D g2d = (Graphics2D) g;
+
         AffineTransform oldTransform = g2d.getTransform();
- 
+
         FontMetrics fmY = getFontMetrics(yFont);
         int yAxisStringWidth = fmY.stringWidth(yAxisStr);
         int yAxisStringHeight = fmY.getHeight();
- 
+
         FontMetrics fmX = getFontMetrics(xFont);
         int xAxisStringWidth = fmX.stringWidth(yAxisStr);
         int xAxisStringHeight = fmX.getHeight();
- 
+
         FontMetrics fmT = getFontMetrics(titleFont);
         int titleStringWidth = fmT.stringWidth(title);
         int titleStringHeight = fmT.getHeight();
- 
+
         g2d.setColor(Color.BLACK);
         //draw tick
         g2d.rotate(Math.toRadians(270)); //rotates to above out of screen.
- 
-        int translateDown = -leftOffset -(topOffset + heightChart/2 + yAxisStringWidth/2);
- 
+
+        int translateDown = -leftOffset - (topOffset + heightChart / 2 + yAxisStringWidth / 2);
+
         //starts off being "topOffset" off, so subtract that first
-        int translateLeft = -topOffset + (leftOffset-yLabelOffset)/2 + yAxisStringHeight/2;
- 
+        int translateLeft = -topOffset + (leftOffset - yLabelOffset) / 2 + yAxisStringHeight / 2;
+
         //pull down, which is basically the left offset, topOffset, then middle it by 
         //usin chart height and using text height.
         g2d.translate(translateDown, translateLeft);
- 
+
         g2d.setFont(yFont);
+        //yAxisStr=yAxis.yLabel;
         g2d.drawString(yAxisStr, leftOffset, topOffset);
- 
+
         //reset
         g2d.setTransform(oldTransform);
- 
+
         int xAxesLabelHeight = bottomOffset - xLabelOffset;
- 
+
         //x label        
         g2d.setFont(xFont);
-        g2d.drawString(xAxis, widthChart/2 + leftOffset - xAxisStringWidth/2, topOffset + heightChart + xLabelOffset + xAxesLabelHeight/2);
- 
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
+        g2d.drawString(xAxisStr, widthChart / 2 + leftOffset - xAxisStringWidth / 2, topOffset + heightChart + xLabelOffset + xAxesLabelHeight / 2);
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, // Anti-alias!
                 RenderingHints.VALUE_ANTIALIAS_ON);
         //title
         g2d.setFont(titleFont);
-        int titleX = (leftOffset + rightOffset + widthChart)/2 - titleStringWidth/2;
-        int titleY = topOffset/2 + titleStringHeight/2;
+        int titleX = (leftOffset + rightOffset + widthChart) / 2 - titleStringWidth / 2;
+        int titleY = topOffset / 2 + titleStringHeight / 2;
         System.out.println("titleStringHeight " + titleStringHeight);
         System.out.println("titleX " + titleX);
         System.out.println("titleY " + titleY);
         System.out.println("topOffset " + topOffset);
- 
+
+        
         g2d.drawString(title, titleX, titleY);
+        pla++;
     }
 }

@@ -54,6 +54,7 @@ public class Jobs {
     for(Job job:jobs){
         if(job.getID().equals(ID)){
             jobs.remove(job);
+            break;
         }
     }
     

@@ -48,13 +48,12 @@ public class Main {
         machines.add(machine);
         Scheduler sheduler= new Scheduler();
         sheduler.simpleAlgorithm(jobs, machines);
-          
-    
+
     
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
-        new MyFrame(view, jobs,machines);
+           MyFrame myFrame = new MyFrame(view, jobs,machines);
       }
     });
 
