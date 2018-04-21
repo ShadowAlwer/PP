@@ -14,9 +14,9 @@ public class Jobs {
     private final ArrayList<Job> jobs;
 
     Job findJobByID(String id) {
-        return jobs.stream().filter((job) -> {
-            return job.getID().equals(id);
-        }).findFirst().get();
+        return jobs.stream().filter((job)
+                -> job.getID().equals(id)
+        ).findFirst().get();
     }
 
     public boolean addJob(ArrayList<String> deps, long execTime, String ID) {
@@ -44,7 +44,10 @@ public class Jobs {
 
         for (Job job : jobs) {
             ArrayList deps = job.getDepends();
-            deps.remove(deps.indexOf(removed));
+            int index = deps.indexOf(removed);
+            if (index != -1) {
+                deps.remove(index);
+            }
         }
     }
 

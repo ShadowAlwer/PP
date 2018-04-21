@@ -33,18 +33,8 @@ public class Main {
         DefaultView view = (DefaultView) viewer.addDefaultView(false);
         view.setPreferredSize(new Dimension(400, 400));
 
-        ArrayList<Machine> machines = new ArrayList<>();
-        Machine machine = new Machine();
-        machines.add(machine);
-        machine = new Machine();
-        machines.add(machine);
-        machine = new Machine();
-        machines.add(machine);
-        Scheduler sheduler = new Scheduler();
-        sheduler.simpleAlgorithm(jobs, machines);
-
         EventQueue.invokeLater(() -> {
-            MyFrame myFrame = new MyFrame(view, jobs, machines);
+            MyFrame myFrame = new MyFrame(view, jobs);
         });
 
         viewer.enableAutoLayout();

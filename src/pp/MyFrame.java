@@ -37,7 +37,7 @@ import static pp.ConstansInterface.NUMBER_OF_TICKS;
 public class MyFrame extends JFrame {
 
     ArrayList<Machine> machines;
-
+    private Scheduler scheduler = new Scheduler();
     Jobs jobs;
     JComboBox comboBoxToDelete;
     JTextField fieldJobName = new JTextField("");
@@ -49,14 +49,14 @@ public class MyFrame extends JFrame {
     private JFrame me = this;
     private BarChart barChart;
 
-    public void setMachines(ArrayList<Machine> machines) {
-        this.machines = machines;
-    }
+//    public void setMachines(ArrayList<Machine> machines) {
+//        this.machines = machines;
+//    }
 
-    public MyFrame(DefaultView view, Jobs jobs, ArrayList<Machine> machines) {
+    public MyFrame(DefaultView view, Jobs jobs) {
 
         this.jobs = jobs;
-        this.machines = machines;
+//        this.machines = machines;
         setPreferredSize(new Dimension(1500, 1000));
         setLayout(new BorderLayout());
         add(view, BorderLayout.LINE_START);
@@ -99,18 +99,8 @@ public class MyFrame extends JFrame {
         c.gridx = 0;
         c.gridy = 4;
         panel3.add(addNewEdge(), c);
-
-        ArrayList<Machine> machines2 = new ArrayList<>();
-        Machine machine = new Machine();
-        machine.addTask(new Job(null, 5, "Job1"), 1);
-        machine.addTask(new Job(null, 3, "Job2"), 8);
-        machines2.add(machine);
-        machine = new Machine();
-        machine.addTask(new Job(null, 3, "Job3"), 1);
-        machine.addTask(new Job(null, 4, "Job4"), 4);
-        machine.addTask(new Job(null, 4, "Job4"), 8);
-        machines2.add(machine);
-        barChart = showBarCharts(machines2);
+        machines = scheduler.simpleAlgorithm(jobs, 3);
+        barChart = showBarCharts(machines);
         //getContentPane().add(barChart, BorderLayout.CENTER);
 
         final JButton prz = new JButton("Show graph");
@@ -118,7 +108,7 @@ public class MyFrame extends JFrame {
         prz.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                machines = scheduler.simpleAlgorithm(jobs, 3);
                 barChart.setBars(getValuesFromMachines(machines));
                 long height = calculateNeededHeightofYAxis(machines);
                 barChart.setyAxis(setAxis(height));

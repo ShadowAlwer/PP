@@ -21,8 +21,13 @@ public class Scheduler {
 
     };
 
-    public void simpleAlgorithm(Jobs jobs, ArrayList<Machine> machines) {
-
+    public ArrayList<Machine> simpleAlgorithm(Jobs jobs, int amountOfMachines) {
+        ArrayList<Machine> machines = new ArrayList<>();
+        
+        for (int i = 0; i < amountOfMachines; ++i) {
+            machines.add(new Machine());
+        }
+        
         ArrayList<Job> queue = new ArrayList<>();
         //jobs.getJobs().toArray(queue);
         ArrayList<ScheduledJob> scheduledJobs = new ArrayList<>();
@@ -82,5 +87,6 @@ public class Scheduler {
                 }
             }
         }
+        return machines;
     }
 }
