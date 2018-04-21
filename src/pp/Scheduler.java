@@ -13,7 +13,7 @@ public class Scheduler {
     private final ArrayList<Job> jobs;
     
     class ScheduledJob {
-        
+
         public Job job;
         public long endTime;
         
@@ -27,6 +27,13 @@ public class Scheduler {
     public Scheduler(ArrayList<Job> jobs, int amountOfMachines) {
         this.jobs = jobs;
         machines = new ArrayList<>();
+        for (int i = 0; i < amountOfMachines; ++i) {
+            machines.add(new Machine());
+        }
+    }
+    
+    public void setMachinesCount(int amountOfMachines) {
+        machines.clear();
         for (int i = 0; i < amountOfMachines; ++i) {
             machines.add(new Machine());
         }
