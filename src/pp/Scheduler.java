@@ -55,6 +55,7 @@ public class Scheduler {
             
             for (Job j : jobs) {
                 boolean toQueue = true;
+                if(!queue.contains(j))
                 if (!j.getDepends().isEmpty()) {
                     for (Job dep : j.getDepends()) {
                         if (!queue.contains(dep)) {
@@ -94,7 +95,7 @@ public class Scheduler {
                         endTime = tmp.getEndTime();
                     }
                     tmp.addTask(j, endTime);
-                    scheduledJobs.add(new ScheduledJob(j, endTime));
+                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
                 }
             }
         }
