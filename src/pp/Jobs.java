@@ -1,7 +1,6 @@
 package pp;
 
 import java.util.ArrayList;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.ui.view.Viewer;
 
@@ -14,54 +13,38 @@ public class Jobs {
     private final DefaultGraph graph;
     private final ArrayList<Job> jobs;
 
+    Job findJobByID(String id) {
+        return jobs.stream().filter((job) -> {
+            return job.getID().equals(id);
+        }).findFirst().get();
+    }
+
     public boolean addJob(ArrayList<String> deps, long execTime, String ID) {
         if (graph.getNode(ID) != null) {
             return false;
         }
         ArrayList<Job> dependencesList = new ArrayList<>();
-        Node node = graph.addNode(ID);
+        graph.addNode(ID).setAttribute("ui.label", ID);
 
         if (deps != null) {
             deps.forEach((id) -> {
-                dependencesList.add(graph.getNode(id).getAttribute("J"));
+                dependencesList.add(findJobByID(id));
                 graph.addEdge(id + ID, id, ID, true);
             });
         }
 
-        Job job = new Job(dependencesList, execTime, ID);
-        node.setAttribute("J", job);
-        node.setAttribute("ui.label", node.getId());
-
-        dependencesList.clear();
-        if (deps != null) {
-            deps.forEach((id) -> {
-                for (Job j : jobs) {
-                    if (j.getID().equals(id)) {
-                        dependencesList.add(j);
-                    }
-                }
-
-            });
-        }
-        job = new Job(dependencesList, execTime, ID);
-        jobs.add(job);
-
+        jobs.add(new Job(dependencesList, execTime, ID));
         return true;
     }
 
     public void removeJob(String ID) {
-        Job removed = graph.removeNode(ID).getAttribute("J");
+        Job removed = findJobByID(ID);
+        graph.removeNode(ID);
+        jobs.remove(removed);
 
         for (Job job : jobs) {
-            if (job.getID().equals(ID)) {
-                jobs.remove(job);
-                break;
-            }
-        }
-
-        for (Node node : graph) {
-            Job job = node.getAttribute("J");
-            job.getDepends().remove(removed);
+            ArrayList deps = job.getDepends();
+            deps.remove(deps.indexOf(removed));
         }
     }
 
@@ -80,12 +63,12 @@ public class Jobs {
     }
 
     public boolean addDependency(String jobID, String dependencyID) {
-        if (jobID.equals(dependencyID)) {
+        if (jobID.equals(dependencyID) || graph.getEdge(jobID + dependencyID) != null) {
             return false;
         }
 
-        Job job = graph.getNode(jobID).getAttribute("J");
-        Job dependency = graph.getNode(dependencyID).getAttribute("J");
+        Job job = findJobByID(jobID);
+        Job dependency = findJobByID(dependencyID);
         if (job == null || dependency == null) {
             return false;
         }
@@ -93,44 +76,14 @@ public class Jobs {
 
         graph.addEdge(dependencyID + jobID, dependencyID, jobID, true);
 
-        for (Job j : jobs) {
-            if (j.getID().equals(dependencyID)) {
-                dependency = j;
-                break;
-            }
-        }
-
-        for (Job j : jobs) {
-            if (j.getID().equals(jobID)) {
-                j.addDependency(dependency);
-                break;
-            }
-        }
-
         return true;
     }
 
     public void removeDependency(String jobID, String dependencyID) {
-        Job job = graph.getNode(jobID).getAttribute("J");
-        Job dependency = graph.getNode(dependencyID).getAttribute("J");
+        Job job = findJobByID(jobID);
+        Job dependency = findJobByID(dependencyID);
         job.removeDependency(dependency);
-
         graph.removeEdge(dependencyID + jobID);
-
-        for (Job j : jobs) {
-            if (j.getID().equals(dependencyID)) {
-                dependency = j;
-                break;
-            }
-        }
-
-        for (Job j : jobs) {
-            if (j.getID().equals(jobID)) {
-                j.removeDependency(dependency);
-                break;
-            }
-        }
-
     }
 
     public ArrayList<Job> getJobs() {
