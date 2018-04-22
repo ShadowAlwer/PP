@@ -113,8 +113,8 @@ public class BarChart extends JPanel {
     }
 
     private void drawTick(int heightChart, int increment, Graphics g, Color c, int tickWidth) {
-
-        int incrementNo = yAxis.maxValue / increment + 1;
+        
+        int incrementNo = yAxis.maxValue / increment ;
 
         double factor = ((double) heightChart / (double) yAxis.maxValue);
 
@@ -130,7 +130,8 @@ public class BarChart extends JPanel {
 
     private void drawYLabels(int heightChart, int increment, Graphics g, Color c) {
 
-        int incrementNo = yAxis.maxValue / increment + 1;
+       
+        int incrementNo = yAxis.maxValue / increment;
 
         double factor = ((double) heightChart / (double) yAxis.maxValue);
 

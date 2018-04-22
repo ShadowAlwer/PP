@@ -507,9 +507,9 @@ public class MyFrame extends JFrame {
 
             private Axis setAxis(long height) {
                 height += 2;
-                int primaryIncrements = (int) (height / NUMBER_OF_TICKS);
-                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
-                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2);
+                int primaryIncrements = (int) (height / NUMBER_OF_TICKS) ==0 ? 1:(int) (height / NUMBER_OF_TICKS) ;
+                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2) ==0 ? 1:(int) (height / NUMBER_OF_TICKS*2);
+                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2)==0 ? 1:(int) (height / NUMBER_OF_TICKS*2);
                 Axis yAxis = new Axis((int) height, 0, primaryIncrements, secondaryIncrements,
                         tertiaryIncrements);
                 return yAxis;
