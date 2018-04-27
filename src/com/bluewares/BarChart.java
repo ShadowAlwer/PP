@@ -18,10 +18,9 @@ public class BarChart extends JPanel {
 
     //offsets (padding of actual chart to its border)
     int leftOffset = 140;
-    int topOffset = 120;
+    int topOffset = 130;
     int bottomOffset = 100;
     int rightOffset = 15;
-    int pla = 0;
 
     //height of X labels (must be significantly smaller than bottomOffset)
     int xLabelOffset = 40;
@@ -30,11 +29,12 @@ public class BarChart extends JPanel {
 
     //tick widths
     int majorTickWidth = 650;
+    int majorTickHeight = 400;
     int secTickWidth = 5;
     int minorTickWidth = 2;
 
-    String xAxisStr = "Machines";
-    String yAxisStr = "Time";
+    String xAxisStr = "Time";
+    String yAxisStr = "Machines";
     String title = "Jobs time for machines Graph";
 
     int width = 800; //total width of the component
@@ -52,7 +52,7 @@ public class BarChart extends JPanel {
     Font xCatFont = new Font("Arial", Font.BOLD, 12);
 
     ArrayList<ArrayList<Bar>> bars;
-    Axis yAxis;
+    Axis xAxis;
     int barWidth = 30;
 
     /**
@@ -61,17 +61,17 @@ public class BarChart extends JPanel {
      * @param bars a number of bars to display
      * @param yAxis Axis object describes how to display y Axis
      */
-    public BarChart(ArrayList<ArrayList<Bar>> bars, Axis yAxis) {
+    public BarChart(ArrayList<ArrayList<Bar>> bars, Axis xAxis) {
         this.bars = bars;
-        this.yAxis = yAxis;
+        this.xAxis = xAxis;
     }
 
     public void setBars(ArrayList<ArrayList<Bar>> bars) {
         this.bars = bars;
     }
 
-    public void setyAxis(Axis yAxis) {
-        this.yAxis = yAxis;
+    public void setxAxis(Axis xAxis) {
+        this.xAxis = xAxis;
     }
 
     @Override
@@ -95,28 +95,31 @@ public class BarChart extends JPanel {
         //bottom
         g.drawLine(leftOffset, heightChart + topOffset, leftOffset + widthChart, heightChart + topOffset);
 
-        if (this.yAxis.primaryIncrements != 0) {
-            drawTick(heightChart, this.yAxis.primaryIncrements, g, Color.BLACK, majorTickWidth);
+        if (this.xAxis.primaryIncrements != 0) {
+           // drawTick(heightChart, this.xAxis.primaryIncrements, g, Color.BLACK, majorTickWidth);
+            drawVerticalTick(widthChart,heightChart, this.xAxis.primaryIncrements, g, Color.BLACK, majorTickHeight);
         }
-        if (this.yAxis.secondaryIncrements != 0) {
-            drawTick(heightChart, this.yAxis.secondaryIncrements, g, Color.BLACK, secTickWidth);
+        if (this.xAxis.secondaryIncrements != 0) {
+          //  drawTick(heightChart, this.yAxis.secondaryIncrements, g, Color.BLACK, secTickWidth);
         }
-        if (this.yAxis.tertiaryIncrements != 0) {
-            drawTick(heightChart, this.yAxis.tertiaryIncrements, g, Color.BLACK, minorTickWidth);
+        if (this.xAxis.tertiaryIncrements != 0) {
+          //  drawTick(heightChart, this.yAxis.tertiaryIncrements, g, Color.BLACK, minorTickWidth);
         }
 
-        drawYLabels(heightChart, this.yAxis.primaryIncrements, g, Color.BLACK);
+       // drawYLabels(heightChart, this.xAxis.primaryIncrements, g, Color.BLACK);
+        drawXLabels(widthChart,heightChart, this.xAxis.primaryIncrements, g, Color.BLACK);
 
-        drawBars(heightChart, widthChart, g);
+       // drawBars(heightChart, widthChart, g);
+        drawBars2(heightChart, widthChart, g);
 
         drawLabels(heightChart, widthChart, g);
     }
 
     private void drawTick(int heightChart, int increment, Graphics g, Color c, int tickWidth) {
         
-        int incrementNo = yAxis.maxValue / increment ;
+        int incrementNo = xAxis.maxValue / increment ;
 
-        double factor = ((double) heightChart / (double) yAxis.maxValue);
+        double factor = ((double) heightChart / (double) xAxis.maxValue);
 
         double incrementInPixel = (double) (increment * factor);
 
@@ -127,13 +130,28 @@ public class BarChart extends JPanel {
             g.drawLine(leftOffset, fromTop, leftOffset + tickWidth, fromTop);
         }
     }
+    private void drawVerticalTick(int widthChart, int heightChart, int increment, Graphics g, Color c, int tickHeight) {
+        
+        int incrementNo = xAxis.maxValue / increment ;
+
+        double factor = ((double) widthChart / (double) xAxis.maxValue);
+
+        double incrementInPixel = (double) (increment * factor);
+
+        g.setColor(c);
+
+        for (int i = 0; i < incrementNo; i++) {
+            int fromLeft =  leftOffset + (int)(i * incrementInPixel);
+            g.drawLine(fromLeft, heightChart + topOffset  , fromLeft, heightChart + topOffset - tickHeight);
+        }
+    }
 
     private void drawYLabels(int heightChart, int increment, Graphics g, Color c) {
 
        
-        int incrementNo = yAxis.maxValue / increment;
+        int incrementNo = xAxis.maxValue / increment;
 
-        double factor = ((double) heightChart / (double) yAxis.maxValue);
+        double factor = ((double) heightChart / (double) xAxis.maxValue);
 
         int incrementInPixel = (int) (increment * factor);
 
@@ -152,6 +170,30 @@ public class BarChart extends JPanel {
             g.drawString(yLabel, (leftOffset - yLabelOffset) + (yLabelOffset / 2 - widthStr / 2), fromTop + (heightStr / 2));
         }
     }
+    private void drawXLabels(int widthChart,int heightChart, int increment, Graphics g, Color c) {
+
+       
+        int incrementNo = xAxis.maxValue / increment;
+
+        double factor = ((double) widthChart / (double) xAxis.maxValue);
+
+        int incrementInPixel = (int) (increment * factor);
+
+        g.setColor(c);
+        FontMetrics fm = getFontMetrics(yCatFont);
+
+        for (int i = 0; i < incrementNo; i++) {
+            int fromLeft =  leftOffset + (i * incrementInPixel);
+
+            String xLabel = "" + (i * increment);
+
+            int widthStr = fm.stringWidth(xLabel);
+            int heightStr = fm.getHeight();
+
+            g.setFont(yCatFont);
+            g.drawString(xLabel, fromLeft + (widthStr / 2),  topOffset +heightChart+ (xLabelOffset - heightStr / 2));
+        }
+    }
 
     private void drawBars(int heightChart, int widthChart, Graphics g) {
 
@@ -165,7 +207,7 @@ public class BarChart extends JPanel {
             i++;
             for (Bar bar : bar1) {
 
-                double factor = ((double) heightChart / (double) yAxis.maxValue);
+                double factor = ((double) heightChart / (double) xAxis.maxValue);
 
                 int scaledBarHeight = (int) (bar.value * factor);
                 int scaledBarStartHeight = (int) (bar.startValue * factor);
@@ -177,7 +219,7 @@ public class BarChart extends JPanel {
                 //lastheight=scaledBarHeight;
                 g.setColor(bar.color);
                 //x, y , szerokosc, wysokosc
-                g.drawRect(leftOffset + (i * pointDistance) - (barWidth / 2), j - scaledBarStartHeight, barWidth, scaledBarHeight);
+                g.drawRect(leftOffset + (i * pointDistance)-(barWidth / 2),               j - scaledBarStartHeight,        barWidth,       scaledBarHeight);
                 //g.fillRect(leftOffset + (i * pointDistance) - (barWidth / 2), j, barWidth, scaledBarHeight);
 
                 //draw tick
@@ -199,6 +241,63 @@ public class BarChart extends JPanel {
                 //draw tick
                 //tu jest opis baru
                 g.drawString(bar.name, leftOffset + (i * pointDistance) - (barWidth / 2), j - scaledBarStartHeight + scaledBarHeight / 2);
+                //g.drawString(bar.name, xPosition, yPosition);
+                counter++;
+
+            }
+            counter = 0;
+        }
+
+    }
+      private void drawBars2(int heightChart, int widthChart, Graphics g) {
+
+        int i = 0;
+        int barNumber = bars.size();
+        int j = 0;
+        int pointDistance = (int) (heightChart / (barNumber + 1));
+        int counter = 0;
+        int lastheight = 0;
+        for (ArrayList<Bar> bar1 : bars) {
+            i++;
+            for (Bar bar : bar1) {
+
+                double factor = ((double) widthChart / (double) xAxis.maxValue);
+
+                int scaledBarWidth = (int) (bar.value * factor);
+                int scaledBarStartWidth = (int) (bar.startValue * factor);
+
+                j = leftOffset + widthChart - scaledBarStartWidth;
+
+                // if (counter>0)
+                // j-=lastheight;
+                //lastheight=scaledBarHeight;
+                g.setColor(bar.color);
+                //x, y , szerokosc, wysokosc
+               // g.drawRect(leftOffset + (i * pointDistance) - (barWidth / 2), j - scaledBarStartWidth, scaledBarWidth, barWidth);
+                g.drawRect( leftOffset + scaledBarStartWidth, leftOffset + (i * pointDistance) - (barWidth / 2), 
+                        scaledBarWidth, barWidth);
+                //g.fillRect(leftOffset + (i * pointDistance) - (barWidth / 2), j, barWidth, scaledBarHeight);
+
+                //draw tick
+                g.drawLine(leftOffset + (i * pointDistance),
+                        topOffset + widthChart,
+                        leftOffset + (i * pointDistance),
+                        topOffset + widthChart + 2);
+
+                FontMetrics fm = getFontMetrics(xCatFont);
+                int widthStr = fm.stringWidth(bar.name);
+                int heightStr = fm.getHeight();
+
+                g.setFont(xCatFont);
+                g.setColor(Color.BLACK);
+
+                int xPosition = leftOffset + (i * pointDistance) - (widthStr / 2);
+                int yPosition = topOffset + widthChart + xLabelOffset - heightStr / 2;
+
+                //draw tick
+                //tu jest opis baru
+                //g.drawString(bar.name, leftOffset + (i * pointDistance) - (barWidth / 2), j - scaledBarStartWidth + scaledBarWidth / 2);
+                g.drawString(bar.name, leftOffset+ scaledBarStartWidth + scaledBarWidth / 2, topOffset + (i * pointDistance) +(barWidth / 2));
                 //g.drawString(bar.name, xPosition, yPosition);
                 counter++;
 
@@ -264,6 +363,5 @@ public class BarChart extends JPanel {
         System.out.println("topOffset " + topOffset);
 
         g2d.drawString(title, titleX, titleY);
-        pla++;
     }
 }

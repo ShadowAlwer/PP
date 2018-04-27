@@ -108,68 +108,7 @@ public class MyFrame extends JFrame {
         barChart = showBarCharts(scheduler.getMachines());
         //getContentPane().add(barChart, BorderLayout.CENTER);
 
-        final JButton prz = new JButton("Show graph");
-
-        prz.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                scheduler.simpleAlgorithm();
-                barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
-                long height = calculateNeededHeightofYAxis(scheduler.getMachines());
-                barChart.setyAxis(setAxis(height));
-                barChart.repaint();
-                getContentPane().add(barChart, BorderLayout.CENTER);
-                SwingUtilities.updateComponentTreeUI(me);
-
-            }
-
-            private ArrayList<ArrayList<Bar>> getValuesFromMachines(ArrayList<Machine> machines) {
-                ArrayList<ArrayList<Bar>> values = new ArrayList<ArrayList<Bar>>();
-                int i = 0;
-                int j = 0;
-                for (Machine machine1 : machines) {
-                    values.add(new ArrayList<Bar>());
-                    for (Machine.Task task : machine1.getWorkQueue()) {
-                        Color color = (j % 2 == 0) ? Color.RED : Color.BLUE;
-                        values.get(i).add(new Bar((int) task.job.getExecutionTime(), color, task.job.getID(), (int) task.startTime));
-                        j++;
-                    }
-                    i++;
-                    j = 0;
-                }
-                return values;
-            }
-
-            private Axis setAxis(long height) {
-                height += 2;
-                int primaryIncrements = (int) (height / NUMBER_OF_TICKS) + 1;
-                int secondaryIncrements = (int) (height / NUMBER_OF_TICKS * 2) + 1;
-                int tertiaryIncrements = (int) (height / NUMBER_OF_TICKS * 2) + 1;
-                Axis yAxis = new Axis((int) height, 0, primaryIncrements, secondaryIncrements,
-                        tertiaryIncrements);
-                return yAxis;
-            }
-
-            private long calculateNeededHeightofYAxis(ArrayList<Machine> machines) {
-
-                Comparator<? super Machine> comparator = (Machine o1, Machine o2) -> {
-                    if (o1.getEndTime() < o2.getEndTime()) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                };
-
-                return machines
-                        .stream()
-                        .max(comparator)
-                        .get()
-                        .getEndTime();
-
-            }
-
-        });
-        getContentPane().add(prz, BorderLayout.PAGE_END);
+       
 
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
@@ -480,8 +419,8 @@ public class MyFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 scheduler.simpleAlgorithm();
                 barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
-                long height = calculateNeededHeightofYAxis(scheduler.getMachines());
-                barChart.setyAxis(setAxis(height));
+                long height = calculateNeededHeightofXAxis(scheduler.getMachines());
+                barChart.setxAxis(setAxis(height));
                 barChart.repaint();
                 getContentPane().add(barChart, BorderLayout.CENTER);
                 SwingUtilities.updateComponentTreeUI(me);
@@ -515,7 +454,7 @@ public class MyFrame extends JFrame {
                 return yAxis;
             }
 
-            private long calculateNeededHeightofYAxis(ArrayList<Machine> machines) {
+            private long calculateNeededHeightofXAxis(ArrayList<Machine> machines) {
 
                 Comparator<? super Machine> comparator = (Machine o1, Machine o2) -> {
                     if (o1.getEndTime() < o2.getEndTime()) {
