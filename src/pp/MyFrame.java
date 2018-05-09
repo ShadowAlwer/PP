@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -41,6 +42,10 @@ public class MyFrame extends JFrame {
     private Scheduler scheduler;
     private Jobs jobs;
     private JComboBox<String> comboBoxToDelete;
+    private JComboBox<String> comboBoxToSelect;
+    private JComboBox<String> comboBoxWithDependencies;
+    private Job choosenJob;
+    private JLabel idLabel,execTimeLabel, infoLabel;
     private JTextField fieldJobName = new JTextField("");
     private JTextField fieldJobTime = new JTextField("");
     private JTextField fieldNumberOfMachines = new JTextField("");
@@ -63,6 +68,7 @@ public class MyFrame extends JFrame {
         JPanel panelX1 = new JPanel(new GridBagLayout());
         JPanel panelX2 = new JPanel(new GridBagLayout());
         JPanel panelX3 = new JPanel(new GridBagLayout());
+        JPanel panelInfo = new JPanel(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.LINE_END;
@@ -108,8 +114,6 @@ public class MyFrame extends JFrame {
         barChart = showBarCharts(scheduler.getMachines());
         //getContentPane().add(barChart, BorderLayout.CENTER);
 
-       
-
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
@@ -117,6 +121,22 @@ public class MyFrame extends JFrame {
         panel3.add(setMachinesNumberInScheduler(), c);
         scheduler.simpleAlgorithm();
 
+        panelInfo.add(new JLabel("--------------------------------------------------------"));
+        c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 7;
+        panel3.add(panelInfo,c);
+        
+         c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 8;
+        //panelX3.add(setMachinesNumberInScheduler(), c);
+        panel3.add(informationAboutJobs(), c);
+
+        
+        
         getContentPane().add(showGraphButtonTask(), BorderLayout.PAGE_END);
         getContentPane().add(panel3, BorderLayout.LINE_END);
         pack();
@@ -286,7 +306,9 @@ public class MyFrame extends JFrame {
 
                 comboBoxFirstNode.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxSecondNode.removeItem(comboBoxToDelete.getSelectedItem());
+                comboBoxToSelect.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxToDelete.removeItem(comboBoxToDelete.getSelectedItem());
+                
 
             }
         });
@@ -525,6 +547,118 @@ public class MyFrame extends JFrame {
         c.gridy = 2;
         panel.add(buttonSetNumberOfMachines, c);
 
+        return panel;
+    }
+
+    private Component informationAboutJobs() {
+        
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        idLabel = new JLabel();
+        execTimeLabel = new JLabel();
+        infoLabel = new JLabel();
+        
+        c.fill = GridBagConstraints.SOUTH;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.gridy = 0;
+        panel.add(newLabelWithFont("Select node: ", 18), c);
+
+        ArrayList<String> jobsNames = new ArrayList<>();
+        for (Node node : jobs.getGraph()) {
+            jobsNames.add(node.getId());
+        }
+
+        comboBoxToSelect = new JComboBox<>(jobsNames.toArray(new String[jobsNames.size()]));
+        //petList.setSelectedIndex(4);
+        c.fill = GridBagConstraints.SOUTH;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        panel.add(comboBoxToSelect, c);
+
+        final JButton buttonSubmitNode = new JButton("Submit");
+        buttonSubmitNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               choosenJob = jobs.findJobByID((String) comboBoxToSelect.getSelectedItem());
+                if(choosenJob!=null)
+                {
+                idLabel.setText(choosenJob.getID());
+                execTimeLabel.setText(Long.toString(choosenJob.getExecutionTime()));
+                if(choosenJob.getDependsName().toArray().length == 0) {
+                        infoLabel.setText("None");
+                        comboBoxWithDependencies.setVisible(false);
+                        infoLabel.setVisible(true);
+                    } else {
+                         comboBoxWithDependencies.removeAll();
+                        comboBoxWithDependencies.setModel(new DefaultComboBoxModel(choosenJob.getDependsName().toArray()));
+                        infoLabel.setVisible(false);
+                        comboBoxWithDependencies.setVisible(true);
+                    }
+                }
+            }
+        });
+
+       
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridwidth = 2;
+        c.gridy = 1;
+        panel.add(buttonSubmitNode, c);
+        
+        // JOB ID LABEL
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridwidth = 2;
+        c.gridy = 2;
+        panel.add(newLabelWithFont("Job ID: ", 18), c);
+        
+        c.fill = GridBagConstraints.EAST;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridwidth = 2;
+        c.gridy = 2;
+        panel.add(idLabel, c);
+        
+        // EXECUTION TIME LABEL
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridwidth = 2;
+        c.gridy = 3;
+        panel.add(newLabelWithFont("Time: ", 18), c);
+        
+        c.fill = GridBagConstraints.EAST;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridwidth = 2;
+        c.gridy = 3;
+        panel.add(execTimeLabel, c);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridwidth = 2;
+        c.gridy = 4;
+        panel.add(newLabelWithFont("Dependency: ", 18), c);
+        
+         comboBoxWithDependencies = new JComboBox<>();
+         comboBoxWithDependencies.setVisible(false);
+         infoLabel.setVisible(false);
+        //petList.setSelectedIndex(4);
+        c.fill = GridBagConstraints.SOUTH;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridwidth = 1;
+        c.gridy = 4;
+        panel.add(comboBoxWithDependencies, c);
+        panel.add(infoLabel,c);
+        
         return panel;
     }
 

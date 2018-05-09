@@ -25,6 +25,15 @@ public class Job {
     public ArrayList<Job> getDepends() {
         return this.depends;
     }
+    
+    public ArrayList<String> getDependsName(){
+        ArrayList<String> dependsName = new ArrayList<>();
+        for(Job j : this.depends)
+        {
+        dependsName.add(j.getID());
+        }
+        return dependsName;
+    }
 
     public long getExecutionTime() {
         return this.executionTime;
