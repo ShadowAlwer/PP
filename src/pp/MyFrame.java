@@ -37,7 +37,7 @@ import static pp.ConstansInterface.NUMBER_OF_TICKS;
  *
  * @author Kamil Sowa
  */
-public class MyFrame extends JFrame {
+public class MyFrame extends JFrame implements ConstansInterface{
 
     private Scheduler scheduler;
     private Jobs jobs;
@@ -55,6 +55,7 @@ public class MyFrame extends JFrame {
     private ArrayList<JMenuItem> listOfCheckBox;
     private JFrame me = this;
     private BarChart barChart;
+    
 
     public MyFrame(DefaultView view, Jobs jobs) {
         this.jobs = jobs;
@@ -69,6 +70,8 @@ public class MyFrame extends JFrame {
         JPanel panelX2 = new JPanel(new GridBagLayout());
         JPanel panelX3 = new JPanel(new GridBagLayout());
         JPanel panelInfo = new JPanel(new GridBagLayout());
+        JPanel panelAlgorithm = new JPanel(new GridBagLayout());
+        
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.LINE_END;
@@ -134,11 +137,27 @@ public class MyFrame extends JFrame {
         c.gridy = 8;
         //panelX3.add(setMachinesNumberInScheduler(), c);
         panel3.add(informationAboutJobs(), c);
+        // Algorithm panel
+         panelAlgorithm.add(new JLabel("--------------------------------------------------------"));
+        c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 9;
+        panel3.add(panelAlgorithm,c);
+        
+         c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 10;
+        //panelX3.add(setMachinesNumberInScheduler(), c);
+        panel3.add(algorithmPicker(), c);
 
         
-        
         getContentPane().add(showGraphButtonTask(), BorderLayout.PAGE_END);
+
         getContentPane().add(panel3, BorderLayout.LINE_END);
+      
+        
         pack();
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -437,16 +456,30 @@ public class MyFrame extends JFrame {
 
         final JButton prz = new JButton("Show graph");
         prz.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                scheduler.simpleAlgorithm();
-                barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
-                long height = calculateNeededHeightofXAxis(scheduler.getMachines());
-                barChart.setxAxis(setAxis(height));
-                barChart.repaint();
-                getContentPane().add(barChart, BorderLayout.CENTER);
-                SwingUtilities.updateComponentTreeUI(me);
-
+                ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxToSelect.getSelectedItem().toString());
+                switch (pickedAlgorithm) {
+                    case FIRST:
+                        scheduler.simpleAlgorithm();
+                        break;
+                    case SECOND:
+                        scheduler.Algorithm2();
+                        break;
+                    case THIRD:
+                        scheduler.Algorithm3();
+                        break;
+                    case FOURTH:
+                        scheduler.Algorithm4();
+                        break;
+                }
+                        barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
+                        long height = calculateNeededHeightofXAxis(scheduler.getMachines());
+                        barChart.setxAxis(setAxis(height));
+                        barChart.repaint();
+                        getContentPane().add(barChart, BorderLayout.CENTER);
+                        SwingUtilities.updateComponentTreeUI(me);
             }
 
             private ArrayList<ArrayList<Bar>> getValuesFromMachines(ArrayList<Machine> machines) {
@@ -661,6 +694,36 @@ public class MyFrame extends JFrame {
         
         return panel;
     }
+
+    private Component algorithmPicker() {
+        
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.fill = GridBagConstraints.SOUTH;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.gridy = 0;
+        panel.add(newLabelWithFont("Select algorithm: ", 18), c);
+       
+        ArrayList<String> algorithmNames = new ArrayList<>();
+        for (ALGORITHM node : ALGORITHM.values()) {
+            algorithmNames.add(node.name());
+        }
+
+        comboBoxToSelect = new JComboBox<>(algorithmNames.toArray(new String[algorithmNames.size()]));
+        //petList.setSelectedIndex(4);
+        c.fill = GridBagConstraints.SOUTH;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        panel.add(comboBoxToSelect, c);
+
+        return panel;
+    }
+
 
     private static class OpenAction implements ActionListener {
 

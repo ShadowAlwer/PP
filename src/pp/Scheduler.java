@@ -12,6 +12,20 @@ public class Scheduler {
     private final ArrayList<Machine> machines;
     private final ArrayList<Job> jobs;
 
+    public void Algorithm2() {
+        // TO DO
+        System.out.println("2 algorytm");
+       
+    }
+     public void Algorithm3() {
+         // TO DO
+          System.out.println("3 algorytm");
+    }
+      public void Algorithm4() {
+          // TO DO
+           System.out.println("4 algorytm");
+    }
+
     class ScheduledJob {
 
         public Job job;
