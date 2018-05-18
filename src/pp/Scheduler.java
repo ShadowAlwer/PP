@@ -1,7 +1,10 @@
 package pp;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  *
@@ -13,7 +16,78 @@ public class Scheduler {
     private final ArrayList<Job> jobs;
 
     public void Algorithm2() {
-        // TO DO
+        machines.stream().forEach((machine) -> machine.getWorkQueue().clear());
+        ArrayList<Job> queue = new ArrayList<>();
+        ArrayList<ScheduledJob> scheduledJobs = new ArrayList<>();
+
+        int level=0;
+        for (Job j : jobs) {
+            if (j.getDepends().isEmpty()) {
+                j.setLevel(level);
+                queue.add(j);
+            }
+        }
+        
+        level++;
+        while (queue.size() < jobs.size()) {
+
+            for (Job j : jobs) {
+                boolean toQueue = true;
+                if(!queue.contains(j))
+                {
+                    if (!j.getDepends().isEmpty()) {
+                        for (Job dep : j.getDepends()) {
+                            if (!queue.contains(dep)) {
+                                toQueue = false;
+                                break;
+                            }
+                        }
+                        if (toQueue) {
+                            j.setLevel(level);
+                            queue.add(j);
+                        }
+                    }
+                }
+                level++;
+            }
+        }
+        for (int i=0;i<=level;i++)
+        {
+            ArrayList<Job> jobsOnLevel=new ArrayList<>();
+            for (Job job : queue) {
+                if (job.getLevel()==i)
+                jobsOnLevel.add(job);
+            }
+            Comparator<? super Job> c=(Job o1, Job o2)->Long.valueOf(o2.getExecutionTime()).compareTo(Long.valueOf(o1.getExecutionTime()));
+            jobsOnLevel.sort(c);
+
+            Machine tmp;
+            long endTime;
+            for (Job j : jobsOnLevel) {
+
+                if (j.getDepends().isEmpty()) {
+                    tmp=getTheLaziestMachine();
+                    tmp.addTask(j, tmp.getEndTime());
+                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
+                } else {
+                    endTime = 0;
+                    for (Job dep : j.getDepends()) {
+                        for (ScheduledJob sj : scheduledJobs) {
+                            if (sj.job.equals(dep) && endTime < sj.endTime) {
+                                endTime = sj.endTime;
+                            }
+                        }
+                    }
+                    tmp=getTheLaziestMachine();
+                    if (endTime < tmp.getEndTime()) {
+                        endTime = tmp.getEndTime();
+                    }
+                    tmp.addTask(j, endTime);
+                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
+                }
+
+            }
+        }
         System.out.println("2 algorytm");
        
     }
@@ -70,17 +144,17 @@ public class Scheduler {
             for (Job j : jobs) {
                 boolean toQueue = true;
                 if(!queue.contains(j))
-                if (!j.getDepends().isEmpty()) {
-                    for (Job dep : j.getDepends()) {
-                        if (!queue.contains(dep)) {
-                            toQueue = false;
-                            break;
+                    if (!j.getDepends().isEmpty()) {
+                        for (Job dep : j.getDepends()) {
+                            if (!queue.contains(dep)) {
+                                toQueue = false;
+                                break;
+                            }
+                        }
+                        if (toQueue) {
+                            queue.add(j);
                         }
                     }
-                    if (toQueue) {
-                        queue.add(j);
-                    }
-                }
             }
         }
 
@@ -117,5 +191,14 @@ public class Scheduler {
 
     public ArrayList<Machine> getMachines() {
         return this.machines;
+    }
+    private Machine getTheLaziestMachine()
+    {
+        Comparator<? super Machine> comparator=(Machine o1, Machine o2)->Long.valueOf(o1.getEndTime()).compareTo(Long.valueOf(o2.getEndTime()));
+        return   machines
+                .stream()
+                .min(comparator)
+                .get();
+        
     }
 }

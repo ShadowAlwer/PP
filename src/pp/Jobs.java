@@ -85,5 +85,5 @@ public class Jobs {
     public ArrayList<Job> getJobs() {
         return jobs;
     }
-
+    
 }

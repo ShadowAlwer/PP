@@ -11,6 +11,7 @@ public class Job {
     private final ArrayList<Job> depends;
     private final long executionTime;
     private final String ID;
+    private  int level;
 
     public Job(ArrayList<Job> d, long e, String id) {
         this.depends = d;
@@ -18,6 +19,15 @@ public class Job {
         this.ID = id;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    
+    public int getLevel() {
+        return this.level;
+    }
+    
+    
     public String getID() {
         return ID;
     }
