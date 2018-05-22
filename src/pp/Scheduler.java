@@ -93,6 +93,91 @@ public class Scheduler {
     }
      public void Algorithm3() {
          // TO DO
+           machines.stream().forEach((machine) -> machine.getWorkQueue().clear());
+          // zerowanie leveli
+           for(Job j : jobs)
+              j.setLevel(0);
+           
+        ArrayList<Job> queue = new ArrayList<>();
+        ArrayList<ScheduledJob> scheduledJobs = new ArrayList<>();
+       // ArrayList<Job> eliminated = new ArrayList<>();
+        ArrayList<Job> checkedJobs = new ArrayList<>();
+        
+        
+        int level=0;
+        for (Job j : jobs) {
+            if (j.getDepends().isEmpty()) {
+                j.setLevel(level);
+                queue.add(j);
+                checkedJobs.add(j);
+            }
+        }
+        
+         //set level for each job
+         for (Job j : jobs) {
+             boolean flagToAdd = false;
+             ArrayList<Job> depends = j.getDepends();
+             ArrayList<Job> tempDepends = new ArrayList<>();
+             for (Job k : depends) {
+                 if (checkedJobs.contains(k)) {
+                     if ((j.getLevel() - 1) > k.getLevel()) {
+                         //nic nie rob
+                     } else {
+                         // ustaw level
+                         j.setLevel(k.getLevel() + 1);
+                         flagToAdd = true;
+                     }
+                 }
+             }
+             // czy został dany job sprawdzony, jak tak to dodaj
+            if(flagToAdd){
+            checkedJobs.add(j);
+            queue.add(j);
+            }
+            if(j.getLevel()>level)
+                level=j.getLevel();
+         }
+        
+        // mamy ustawione levele na poszczególnych jobach i dodane wszystko do kolejki
+ 
+         //level = 3;
+        for (int i=0;i<=level;i++)
+        {
+            ArrayList<Job> jobsOnLevel=new ArrayList<>();
+            for (Job job : queue) {
+                if (job.getLevel()==i)
+                jobsOnLevel.add(job);
+            }
+            Comparator<? super Job> c=(Job o1, Job o2)->Long.valueOf(o2.getExecutionTime()).compareTo(Long.valueOf(o1.getExecutionTime()));
+            jobsOnLevel.sort(c);
+
+            Machine tmp;
+            long endTime;
+            for (Job j : jobsOnLevel) {
+
+                if (j.getDepends().isEmpty()) {
+                    tmp=getTheLaziestMachine();
+                    tmp.addTask(j, tmp.getEndTime());
+                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
+                } else {
+                    endTime = 0;
+                    for (Job dep : j.getDepends()) {
+                        for (ScheduledJob sj : scheduledJobs) {
+                            if (sj.job.equals(dep) && endTime < sj.endTime) {
+                                endTime = sj.endTime;
+                            }
+                        }
+                    }
+                    tmp=getTheLaziestMachine();
+                    if (endTime < tmp.getEndTime()) {
+                        endTime = tmp.getEndTime();
+                    }
+                    tmp.addTask(j, endTime);
+                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
+                }
+
+            }
+        }
           System.out.println("3 algorytm");
     }
       public void Algorithm4() {

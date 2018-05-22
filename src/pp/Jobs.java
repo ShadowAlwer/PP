@@ -18,7 +18,7 @@ public class Jobs {
                 -> job.getID().equals(id)
         ).findFirst().get();
     }
-
+    
     public boolean addJob(ArrayList<String> deps, long execTime, String ID) {
         if (graph.getNode(ID) != null) {
             return false;

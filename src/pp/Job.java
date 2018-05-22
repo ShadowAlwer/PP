@@ -11,7 +11,7 @@ public class Job {
     private final ArrayList<Job> depends;
     private final long executionTime;
     private final String ID;
-    private  int level;
+    private int level;
 
     public Job(ArrayList<Job> d, long e, String id) {
         this.depends = d;
