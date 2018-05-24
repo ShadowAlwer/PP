@@ -44,6 +44,7 @@ public class MyFrame extends JFrame implements ConstansInterface{
     private JComboBox<String> comboBoxToDelete;
     private JComboBox<String> comboBoxToSelect;
     private JComboBox<String> comboBoxWithDependencies;
+    private JComboBox<String> comboBoxDetails;
     private Job choosenJob;
     private JLabel idLabel,execTimeLabel, infoLabel;
     private JTextField fieldJobName = new JTextField("");
@@ -261,12 +262,13 @@ public class MyFrame extends JFrame implements ConstansInterface{
                     comboBoxToDelete.addItem(fieldJobName.getText());
                     comboBoxFirstNode.addItem(fieldJobName.getText());
                     comboBoxSecondNode.addItem(fieldJobName.getText());
+                    comboBoxDetails.addItem(fieldJobName.getText());
                 } catch (NumberFormatException ex) {
                     System.err.println("NumberFormatException " + ex.getMessage());
 
                     JOptionPane.showMessageDialog(me,
                             "Job time must be a long number for example:1 ",
-                            "Inane error",
+                            "Insane error",
                             JOptionPane.ERROR_MESSAGE);
 
                 } finally {
@@ -327,6 +329,7 @@ public class MyFrame extends JFrame implements ConstansInterface{
                 comboBoxSecondNode.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxToSelect.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxToDelete.removeItem(comboBoxToDelete.getSelectedItem());
+                comboBoxDetails.removeItem(comboBoxToDelete.getSelectedItem());
                 
 
             }
@@ -460,6 +463,13 @@ public class MyFrame extends JFrame implements ConstansInterface{
             @Override
             public void actionPerformed(ActionEvent e) {
                 ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxToSelect.getSelectedItem().toString());
+                if (jobs.isCyclic()) {
+                    JOptionPane.showMessageDialog(me,
+                            "Graph contains cycle!",
+                            "Insane error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 switch (pickedAlgorithm) {
                     case FIRST:
                         scheduler.simpleAlgorithm();
@@ -596,27 +606,27 @@ public class MyFrame extends JFrame implements ConstansInterface{
         c.gridx = 0;
         c.gridwidth = 2;
         c.gridy = 0;
-        panel.add(newLabelWithFont("Select node: ", 18), c);
+        panel.add(newLabelWithFont("Details of node: ", 18), c);
 
         ArrayList<String> jobsNames = new ArrayList<>();
         for (Node node : jobs.getGraph()) {
             jobsNames.add(node.getId());
         }
 
-        comboBoxToSelect = new JComboBox<>(jobsNames.toArray(new String[jobsNames.size()]));
+        comboBoxDetails = new JComboBox<>(jobsNames.toArray(new String[jobsNames.size()]));
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
         c.gridx = 2;
         c.gridwidth = 1;
         c.gridy = 0;
-        panel.add(comboBoxToSelect, c);
+        panel.add(comboBoxDetails, c);
 
         final JButton buttonSubmitNode = new JButton("Submit");
         buttonSubmitNode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               choosenJob = jobs.findJobByID((String) comboBoxToSelect.getSelectedItem());
+               choosenJob = jobs.findJobByID((String) comboBoxDetails.getSelectedItem());
                 if(choosenJob!=null)
                 {
                 idLabel.setText(choosenJob.getID());

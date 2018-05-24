@@ -1,6 +1,7 @@
 package pp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.ui.view.Viewer;
 
@@ -84,6 +85,39 @@ public class Jobs {
 
     public ArrayList<Job> getJobs() {
         return jobs;
+    }
+    
+    private boolean isCyclicUtil(Job job, HashMap<String, Boolean> visitedJobs) {
+        if (job.getDepends() == null) {
+            return false;
+        }
+        
+        if (visitedJobs.get(job.getID()) == true) {
+            return true;
+        }
+        
+        visitedJobs.replace(job.getID(), Boolean.FALSE, Boolean.TRUE);
+        
+        for (Job j : job.getDepends()) {
+            if (isCyclicUtil(j, visitedJobs)) {
+                return true;
+            }
+        }
+        
+        visitedJobs.replace(job.getID(), Boolean.TRUE, Boolean.FALSE);
+        
+        return false;
+    }
+    
+    public boolean isCyclic() {
+        HashMap<String, Boolean> visitedJobs = new HashMap<>();
+        jobs.forEach(j -> visitedJobs.put(j.getID(), Boolean.FALSE));
+        for (Job j : jobs) {
+            if (isCyclicUtil(j, visitedJobs)) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }
