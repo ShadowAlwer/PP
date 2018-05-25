@@ -387,9 +387,15 @@ public class MyFrame extends JFrame implements ConstansInterface{
         buttonAddEdge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                
                 jobs.addDependency((String) comboBoxFirstNode.getSelectedItem(), (String) comboBoxSecondNode.getSelectedItem());
-
+                if (jobs.isCyclic()) {
+                    jobs.removeDependency((String) comboBoxFirstNode.getSelectedItem(), (String) comboBoxSecondNode.getSelectedItem());
+                    JOptionPane.showMessageDialog(me,
+                            "Graph will contain a cycle!",
+                            "Insane error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -463,13 +469,6 @@ public class MyFrame extends JFrame implements ConstansInterface{
             @Override
             public void actionPerformed(ActionEvent e) {
                 ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxToSelect.getSelectedItem().toString());
-                if (jobs.isCyclic()) {
-                    JOptionPane.showMessageDialog(me,
-                            "Graph contains cycle!",
-                            "Insane error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
                 switch (pickedAlgorithm) {
                     case FIRST:
                         scheduler.simpleAlgorithm();
