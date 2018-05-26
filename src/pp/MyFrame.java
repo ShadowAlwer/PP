@@ -14,10 +14,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -27,11 +25,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swingViewer.DefaultView;
 import static pp.ConstansInterface.NUMBER_OF_TICKS;
+
 
 /**
  *
@@ -43,9 +46,8 @@ public class MyFrame extends JFrame implements ConstansInterface{
     private Jobs jobs;
     private JComboBox<String> comboBoxToDelete;
     private JComboBox<String> comboBoxToSelect;
-    private JComboBox<String> comboBoxWithDependencies;
+    private JComboBox<String> comboBoxAlgorithm;
     private Job choosenJob;
-    private JLabel idLabel,execTimeLabel, infoLabel;
     private JTextField fieldJobName = new JTextField("");
     private JTextField fieldJobTime = new JTextField("");
     private JTextField fieldNumberOfMachines = new JTextField("");
@@ -55,6 +57,13 @@ public class MyFrame extends JFrame implements ConstansInterface{
     private ArrayList<JMenuItem> listOfCheckBox;
     private JFrame me = this;
     private BarChart barChart;
+    private JTextArea infoTextArea;
+    private JScrollPane scroll;
+    private JTextField fieldJobMachineProperties;
+    private JComboBox<String> comboBoxProperties;
+    private JRadioButton radioButtonMachines;
+    private JRadioButton radioButtonJobs;
+    private ButtonGroup buttonGroupProperties;
     
 
     public MyFrame(DefaultView view, Jobs jobs) {
@@ -64,11 +73,11 @@ public class MyFrame extends JFrame implements ConstansInterface{
         setLayout(new BorderLayout());
         add(view, BorderLayout.LINE_START);
 
-        JPanel panel3 = new JPanel(new GridBagLayout());
-        JPanel panel4 = new JPanel(new GridBagLayout());
+        JPanel panel3 = new JPanel(new GridBagLayout());        
         JPanel panelX1 = new JPanel(new GridBagLayout());
         JPanel panelX2 = new JPanel(new GridBagLayout());
         JPanel panelX3 = new JPanel(new GridBagLayout());
+        JPanel panelX4 = new JPanel(new GridBagLayout());
         JPanel panelInfo = new JPanel(new GridBagLayout());
         JPanel panelAlgorithm = new JPanel(new GridBagLayout());
         
@@ -105,7 +114,6 @@ public class MyFrame extends JFrame implements ConstansInterface{
         c.gridx = 0;
         c.gridy = 4;
         panel3.add(addNewEdge(), c);
-        scheduler.simpleAlgorithm();
 
         panelX3.add(new JLabel("--------------------------------------------------------"));
         c.fill = GridBagConstraints.LINE_END;
@@ -115,49 +123,57 @@ public class MyFrame extends JFrame implements ConstansInterface{
         panel3.add(panelX3, c);
         //
         barChart = showBarCharts(scheduler.getMachines());
-        //getContentPane().add(barChart, BorderLayout.CENTER);
+ 
 
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
         c.gridy = 6;
         panel3.add(setMachinesNumberInScheduler(), c);
-        scheduler.simpleAlgorithm();
 
-        panelInfo.add(new JLabel("--------------------------------------------------------"));
+        panelX4.add(new JLabel("--------------------------------------------------------"));
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
         c.gridy = 7;
+        panel3.add(panelX4,c);
+        
+        c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 8;
+        panel3.add(setJobMachinePropertieses(),c);
+        
+        panelInfo.add(new JLabel("--------------------------------------------------------"));
+        c.fill = GridBagConstraints.LINE_END;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 9;
         panel3.add(panelInfo,c);
         
          c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
-        c.gridy = 8;
-        //panelX3.add(setMachinesNumberInScheduler(), c);
+        c.gridy = 10;
         panel3.add(informationAboutJobs(), c);
         // Algorithm panel
          panelAlgorithm.add(new JLabel("--------------------------------------------------------"));
         c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
-        c.gridy = 9;
+        c.gridy = 11;
         panel3.add(panelAlgorithm,c);
         
          c.fill = GridBagConstraints.LINE_END;
         c.weightx = 0.5;
         c.gridx = 0;
-        c.gridy = 10;
-        //panelX3.add(setMachinesNumberInScheduler(), c);
+        c.gridy = 12;
         panel3.add(algorithmPicker(), c);
-
-        
+       
         getContentPane().add(showGraphButtonTask(), BorderLayout.PAGE_END);
 
         getContentPane().add(panel3, BorderLayout.LINE_END);
-      
-        
+              
         pack();
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -459,10 +475,10 @@ public class MyFrame extends JFrame implements ConstansInterface{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxToSelect.getSelectedItem().toString());
+                ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxAlgorithm.getSelectedItem().toString());
                 switch (pickedAlgorithm) {
                     case FIRST:
-                        scheduler.simpleAlgorithm();
+                        scheduler.Algorithm1();
                         break;
                     case SECOND:
                         scheduler.Algorithm2();
@@ -582,14 +598,114 @@ public class MyFrame extends JFrame implements ConstansInterface{
 
         return panel;
     }
+    
+     private Component setJobMachinePropertieses() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        fieldJobMachineProperties= new JTextField(""); 
+        radioButtonJobs=new JRadioButton("Jobs");
+        radioButtonJobs.setSelected(true);
+        radioButtonMachines= new JRadioButton("Machines");
+               
+        radioButtonJobs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+               comboBoxProperties.removeAllItems();
+               for(String n: getJobsNames())
+               comboBoxProperties.addItem(n);
+            }
+        });
+        
+        radioButtonMachines.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                comboBoxProperties.removeAllItems();
+                for(int i=0; i<scheduler.getMachines().size(); i++)
+                    comboBoxProperties.addItem("M"+(i+1));            
+            }
+        });
+        
+              
+         final JButton buttonSubmitNode = new JButton("Submit");
+        buttonSubmitNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                
+                if(!fieldJobMachineProperties.getText().equals("")){
+               //add Properties
+               if(radioButtonJobs.isEnabled()){
+               //add to job
+               jobs.findJobByID((String)comboBoxProperties.getSelectedItem()).addProperty(fieldJobMachineProperties.getText());
+               }
+               else{
+                    scheduler.getMachines().get(comboBoxProperties.getSelectedIndex()).addProperty(fieldJobMachineProperties.getText());
+               }
+            }}
+        });
+             
+        comboBoxProperties= new JComboBox<>(getJobsNames());
+        
+        buttonGroupProperties= new ButtonGroup();
+        buttonGroupProperties.add(radioButtonJobs);
+        buttonGroupProperties.add(radioButtonMachines);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        panel.add(newLabelWithFont("Add properties to:  ", 18), c);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 1;
+        c.gridy = 1;
+        panel.add(radioButtonJobs,c);
+        
+         c.fill = GridBagConstraints.EAST;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridwidth = 1;
+        c.gridy = 1;
+        panel.add(radioButtonMachines,c);
+        
+        c.fill = GridBagConstraints.LINE_START;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.gridy = 2;
+        panel.add(comboBoxProperties,c);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.gridy = 3;
+        panel.add(fieldJobMachineProperties,c);
+        
+         c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.gridy = 4;
+        panel.add(buttonSubmitNode,c);
+        
+        
+        return panel;
+    }
 
     private Component informationAboutJobs() {
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        idLabel = new JLabel();
-        execTimeLabel = new JLabel();
-        infoLabel = new JLabel();
+        infoTextArea = new JTextArea(3, 15);
+        infoTextArea.setFont(new Font(Font.SANS_SERIF,Font.PLAIN, 18));
+        infoTextArea.setEditable(false);
+        infoTextArea.setLineWrap(true);
+        infoTextArea.setWrapStyleWord(true);
+        scroll = new JScrollPane(infoTextArea);
         
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
@@ -598,12 +714,7 @@ public class MyFrame extends JFrame implements ConstansInterface{
         c.gridy = 0;
         panel.add(newLabelWithFont("Select node: ", 18), c);
 
-        ArrayList<String> jobsNames = new ArrayList<>();
-        for (Node node : jobs.getGraph()) {
-            jobsNames.add(node.getId());
-        }
-
-        comboBoxToSelect = new JComboBox<>(jobsNames.toArray(new String[jobsNames.size()]));
+        comboBoxToSelect = new JComboBox<>(getJobsNames());
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
@@ -619,78 +730,47 @@ public class MyFrame extends JFrame implements ConstansInterface{
                choosenJob = jobs.findJobByID((String) comboBoxToSelect.getSelectedItem());
                 if(choosenJob!=null)
                 {
-                idLabel.setText(choosenJob.getID());
-                execTimeLabel.setText(Long.toString(choosenJob.getExecutionTime()));
+                infoTextArea.setText("");
+                infoTextArea.append("Job ID: "+choosenJob.getID()+"\n");
+                infoTextArea.append("Time: "+choosenJob.getExecutionTime()+"\n");
+                
                 if(choosenJob.getDependsName().toArray().length == 0) {
-                        infoLabel.setText("None");
-                        comboBoxWithDependencies.setVisible(false);
-                        infoLabel.setVisible(true);
-                    } else {
-                         comboBoxWithDependencies.removeAll();
-                        comboBoxWithDependencies.setModel(new DefaultComboBoxModel(choosenJob.getDependsName().toArray()));
-                        infoLabel.setVisible(false);
-                        comboBoxWithDependencies.setVisible(true);
+                                          
+                        infoTextArea.append("Dependencies: None");
+                    } else {                       
+                        infoTextArea.append("Dependencies: ");
+                        for(String jobID: choosenJob.getDependsName())
+                            infoTextArea.append(jobID+" ");
+                        
                     }
+                infoTextArea.append("\nProperties: ");
+                if(choosenJob.getProperties().size()==0){
+                infoTextArea.append("None");
+                } else{
+                for(String property: choosenJob.getProperties())
+                    infoTextArea.append("\n"+property);
+                }
                 }
             }
         });
 
-       
+        
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.5;
         c.gridx = 1;
         c.gridwidth = 2;
         c.gridy = 1;
         panel.add(buttonSubmitNode, c);
+                 
         
-        // JOB ID LABEL
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 1;
-        c.gridwidth = 2;
-        c.gridy = 2;
-        panel.add(newLabelWithFont("Job ID: ", 18), c);
-        
-        c.fill = GridBagConstraints.EAST;
-        c.weightx = 0.5;
-        c.gridx = 2;
-        c.gridwidth = 2;
-        c.gridy = 2;
-        panel.add(idLabel, c);
-        
-        // EXECUTION TIME LABEL
+       
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.5;
         c.gridx = 1;
         c.gridwidth = 2;
         c.gridy = 3;
-        panel.add(newLabelWithFont("Time: ", 18), c);
-        
-        c.fill = GridBagConstraints.EAST;
-        c.weightx = 0.5;
-        c.gridx = 2;
-        c.gridwidth = 2;
-        c.gridy = 3;
-        panel.add(execTimeLabel, c);
-        
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 1;
-        c.gridwidth = 2;
-        c.gridy = 4;
-        panel.add(newLabelWithFont("Dependency: ", 18), c);
-        
-         comboBoxWithDependencies = new JComboBox<>();
-         comboBoxWithDependencies.setVisible(false);
-         infoLabel.setVisible(false);
-        //petList.setSelectedIndex(4);
-        c.fill = GridBagConstraints.SOUTH;
-        c.weightx = 0.5;
-        c.gridx = 2;
-        c.gridwidth = 1;
-        c.gridy = 4;
-        panel.add(comboBoxWithDependencies, c);
-        panel.add(infoLabel,c);
+        panel.add(scroll,c);
         
         return panel;
     }
@@ -712,20 +792,19 @@ public class MyFrame extends JFrame implements ConstansInterface{
             algorithmNames.add(node.name());
         }
 
-        comboBoxToSelect = new JComboBox<>(algorithmNames.toArray(new String[algorithmNames.size()]));
+        comboBoxAlgorithm = new JComboBox<>(algorithmNames.toArray(new String[algorithmNames.size()]));
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
         c.gridx = 2;
         c.gridwidth = 1;
         c.gridy = 0;
-        panel.add(comboBoxToSelect, c);
+        panel.add(comboBoxAlgorithm, c);
 
         return panel;
     }
 
-
-    private static class OpenAction implements ActionListener {
+   private static class OpenAction implements ActionListener {
 
         private final JPopupMenu menu;
         private final JButton button;
@@ -740,5 +819,15 @@ public class MyFrame extends JFrame implements ConstansInterface{
             menu.show(button, 0, button.getHeight());
         }
     }
+   
+   
+   private String[] getJobsNames(){
+   
+       ArrayList<String> jobsNames = new ArrayList<>();
+        for (Node node : jobs.getGraph()) {
+            jobsNames.add(node.getId());
+        }
+        return jobsNames.toArray(new String[jobsNames.size()]);
+   }
 
 }
