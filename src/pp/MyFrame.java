@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.swingViewer.DefaultView;
 import static pp.ConstansInterface.NUMBER_OF_TICKS;
+import pp.Machine.Task;
 
 /**
  *
@@ -47,6 +48,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
     private JComboBox<String> comboBoxToSelect;
     private JComboBox<String> comboBoxAlgorithm;
     private Job choosenJob;
+    private Machine choosenMachine;
     private JTextField fieldJobName = new JTextField("");
     private JTextField fieldJobTime = new JTextField("");
     private JTextField fieldNumberOfMachines = new JTextField("");
@@ -60,10 +62,13 @@ public class MyFrame extends JFrame implements ConstansInterface {
     private JScrollPane scroll;
     private JTextField fieldJobMachineProperties;
     private JComboBox<String> comboBoxProperties;
-    private JRadioButton radioButtonMachines;
-    private JRadioButton radioButtonJobs;
+    private JRadioButton radioButtonMachinesProperties;
+    private JRadioButton radioButtonJobsProperties;
     private JRadioButton radioButtonAddProperty;
     private JRadioButton radioButtonRemoveProperty;
+    private JRadioButton radioButtonMachinesInfo;
+    private JRadioButton radioButtonJobsInfo;
+    private ButtonGroup buttonGroupInfo;
     private ButtonGroup buttonGroupProperties1;
     private ButtonGroup buttonGroupProperties2;
 
@@ -154,7 +159,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
         c.weightx = 0.5;
         c.gridx = 0;
         c.gridy = 10;
-        panel3.add(informationAboutJobs(), c);
+        panel3.add(informationAboutJobsAndMachines(), c);
         // Algorithm panel
         panelAlgorithm.add(new JLabel("--------------------------------------------------------"));
         c.fill = GridBagConstraints.LINE_END;
@@ -276,7 +281,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
                     comboBoxToDelete.addItem(fieldJobName.getText());
                     comboBoxFirstNode.addItem(fieldJobName.getText());
                     comboBoxSecondNode.addItem(fieldJobName.getText());
-                    if (radioButtonJobs.isSelected()) {
+                    if (radioButtonJobsProperties.isSelected()) {
                         comboBoxProperties.addItem(fieldJobName.getText());
                     }
                 } catch (NumberFormatException ex) {
@@ -472,32 +477,41 @@ public class MyFrame extends JFrame implements ConstansInterface {
         barChart = showBarCharts(scheduler.getMachines());
         //getContentPane().add(barChart, BorderLayout.CENTER);
 
+        boolean sheduled = true;
         final JButton prz = new JButton("Show graph");
         prz.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxAlgorithm.getSelectedItem().toString());
-                switch (pickedAlgorithm) {
-                    case FIRST:
-                        scheduler.Algorithm1();
-                        break;
-                    case SECOND:
-                        scheduler.Algorithm2();
-                        break;
-                    case THIRD:
-                        scheduler.Algorithm3();
-                        break;
-                    case FOURTH:
-                        scheduler.Algorithm4();
-                        break;
+                try {
+                    ALGORITHM pickedAlgorithm = ALGORITHM.valueOf(comboBoxAlgorithm.getSelectedItem().toString());
+                    switch (pickedAlgorithm) {
+                        case FIRST:
+                            scheduler.Algorithm1();
+                            break;
+                        case SECOND:
+                            scheduler.Algorithm2();
+                            break;
+                        case THIRD:
+                            scheduler.Algorithm3();
+                            break;
+                        case FOURTH:
+                            scheduler.Algorithm4();
+                            break;
+
+                    }
+                    barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
+                    long height = calculateNeededHeightofXAxis(scheduler.getMachines());
+                    barChart.setxAxis(setAxis(height));
+                    barChart.repaint();
+                    getContentPane().add(barChart, BorderLayout.CENTER);
+                    SwingUtilities.updateComponentTreeUI(me);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(me,
+                            ex + " Add machines that can finish given jobs.",
+                            "Inane error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-                barChart.setBars(getValuesFromMachines(scheduler.getMachines()));
-                long height = calculateNeededHeightofXAxis(scheduler.getMachines());
-                barChart.setxAxis(setAxis(height));
-                barChart.repaint();
-                getContentPane().add(barChart, BorderLayout.CENTER);
-                SwingUtilities.updateComponentTreeUI(me);
             }
 
             private ArrayList<ArrayList<Bar>> getValuesFromMachines(ArrayList<Machine> machines) {
@@ -577,13 +591,19 @@ public class MyFrame extends JFrame implements ConstansInterface {
                         throw new NumberFormatException();
                     }
                     scheduler.setMachinesCount(Integer.parseInt(fieldNumberOfMachines.getText()));
-                    if (radioButtonMachines.isSelected()) {
+                    if (radioButtonMachinesProperties.isSelected()) {
                         comboBoxProperties.removeAllItems();
                         for (int i = 0; i < scheduler.getMachines().size(); i++) {
                             comboBoxProperties.addItem("M" + (i + 1));
                         }
                     }
 
+                    if (radioButtonMachinesInfo.isSelected()) {
+                        comboBoxToSelect.removeAllItems();
+                        for (int i = 0; i < scheduler.getMachines().size(); i++) {
+                            comboBoxToSelect.addItem("M" + (i + 1));
+                        }
+                    }
                 } catch (NumberFormatException ex) {
                     System.err.println("NumberFormatException " + ex.getMessage());
 
@@ -611,14 +631,14 @@ public class MyFrame extends JFrame implements ConstansInterface {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         fieldJobMachineProperties = new JTextField("");
-        radioButtonJobs = new JRadioButton("Jobs");
-        radioButtonJobs.setSelected(true);
-        radioButtonMachines = new JRadioButton("Machines");
+        radioButtonJobsProperties = new JRadioButton("Jobs");
+        radioButtonJobsProperties.setSelected(true);
+        radioButtonMachinesProperties = new JRadioButton("Machines");
         radioButtonAddProperty = new JRadioButton("Add");
         radioButtonAddProperty.setSelected(true);
         radioButtonRemoveProperty = new JRadioButton("Remove");
 
-        radioButtonJobs.addActionListener(new ActionListener() {
+        radioButtonJobsProperties.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 comboBoxProperties.removeAllItems();
@@ -628,7 +648,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
             }
         });
 
-        radioButtonMachines.addActionListener(new ActionListener() {
+        radioButtonMachinesProperties.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 comboBoxProperties.removeAllItems();
@@ -645,7 +665,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
 
                 if (!fieldJobMachineProperties.getText().equals("")) {
 
-                    if (radioButtonJobs.isSelected()) {
+                    if (radioButtonJobsProperties.isSelected()) {
                         if (radioButtonAddProperty.isSelected()) {
                             if (!jobs.findJobByID((String) comboBoxProperties.getSelectedItem()).getProperties().contains(fieldJobMachineProperties.getText())) {
                                 jobs.findJobByID((String) comboBoxProperties.getSelectedItem()).addProperty(fieldJobMachineProperties.getText());
@@ -669,13 +689,13 @@ public class MyFrame extends JFrame implements ConstansInterface {
         comboBoxProperties = new JComboBox<>(getJobsNames());
 
         buttonGroupProperties1 = new ButtonGroup();
-        buttonGroupProperties1.add(radioButtonJobs);
-        buttonGroupProperties1.add(radioButtonMachines);
+        buttonGroupProperties1.add(radioButtonJobsProperties);
+        buttonGroupProperties1.add(radioButtonMachinesProperties);
 
         buttonGroupProperties2 = new ButtonGroup();
         buttonGroupProperties2.add(radioButtonAddProperty);
         buttonGroupProperties2.add(radioButtonRemoveProperty);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.5;
         c.gridx = 0;
@@ -688,14 +708,14 @@ public class MyFrame extends JFrame implements ConstansInterface {
         c.gridx = 0;
         c.gridwidth = 1;
         c.gridy = 1;
-        panel.add(radioButtonJobs, c);
+        panel.add(radioButtonJobsProperties, c);
 
         c.fill = GridBagConstraints.EAST;
         c.weightx = 0.5;
         c.gridx = 1;
         c.gridwidth = 1;
         c.gridy = 1;
-        panel.add(radioButtonMachines, c);
+        panel.add(radioButtonMachinesProperties, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.5;
@@ -735,7 +755,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
         return panel;
     }
 
-    private Component informationAboutJobs() {
+    private Component informationAboutJobsAndMachines() {
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -745,6 +765,12 @@ public class MyFrame extends JFrame implements ConstansInterface {
         infoTextArea.setLineWrap(true);
         infoTextArea.setWrapStyleWord(true);
         scroll = new JScrollPane(infoTextArea);
+        radioButtonMachinesInfo = new JRadioButton("Machines");
+        radioButtonJobsInfo = new JRadioButton("Jobs");
+        radioButtonJobsInfo.setSelected(true);
+        buttonGroupInfo = new ButtonGroup();
+        buttonGroupInfo.add(radioButtonJobsInfo);
+        buttonGroupInfo.add(radioButtonMachinesInfo);
 
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
@@ -762,31 +788,89 @@ public class MyFrame extends JFrame implements ConstansInterface {
         c.gridy = 0;
         panel.add(comboBoxToSelect, c);
 
+        radioButtonJobsInfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                comboBoxToSelect.removeAllItems();
+                for (String n : getJobsNames()) {
+                    comboBoxToSelect.addItem(n);
+                }
+            }
+        });
+
+        radioButtonMachinesInfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                comboBoxToSelect.removeAllItems();
+                for (int i = 0; i < scheduler.getMachines().size(); i++) {
+                    comboBoxToSelect.addItem("M" + (i + 1));
+                }
+            }
+        });
+
+        c.fill = GridBagConstraints.EAST;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridwidth = 1;
+        c.gridy = 1;
+        panel.add(radioButtonJobsInfo, c);
+
+        c.fill = GridBagConstraints.SOUTH;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridwidth = 1;
+        c.gridy = 1;
+        panel.add(radioButtonMachinesInfo, c);
+
         final JButton buttonSubmitNode = new JButton("Submit");
         buttonSubmitNode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                choosenJob = jobs.findJobByID((String) comboBoxToSelect.getSelectedItem());
-                if (choosenJob != null) {
-                    infoTextArea.setText("");
-                    infoTextArea.append("Job ID: " + choosenJob.getID() + "\n");
-                    infoTextArea.append("Time: " + choosenJob.getExecutionTime() + "\n");
+                if (radioButtonJobsInfo.isSelected()) {
+                    choosenJob = jobs.findJobByID((String) comboBoxToSelect.getSelectedItem());
+                    if (choosenJob != null) {
+                        infoTextArea.setText("");
+                        infoTextArea.append("Job ID: " + choosenJob.getID() + "\n");
+                        infoTextArea.append("Time: " + choosenJob.getExecutionTime() + "\n");
 
-                    if (choosenJob.getDependsName().toArray().length == 0) {
+                        if (choosenJob.getDependsName().toArray().length == 0) {
 
-                        infoTextArea.append("Dependencies: None");
-                    } else {
-                        infoTextArea.append("Dependencies: ");
-                        for (String jobID : choosenJob.getDependsName()) {
-                            infoTextArea.append(jobID + " ");
+                            infoTextArea.append("Dependencies: None");
+                        } else {
+                            infoTextArea.append("Dependencies: ");
+                            for (String jobID : choosenJob.getDependsName()) {
+                                infoTextArea.append(jobID + " ");
+                            }
+
                         }
+                        infoTextArea.append("\nProperties: ");
+                        if (choosenJob.getProperties().size() == 0) {
+                            infoTextArea.append("None");
+                        } else {
+                            for (String property : choosenJob.getProperties()) {
+                                infoTextArea.append("\n" + property);
+                            }
+                        }
+                    }
+                } else {
+                    choosenMachine = scheduler.getMachines().get(comboBoxToSelect.getSelectedIndex());
+                    infoTextArea.setText("");
+                    infoTextArea.append("Machine ID: M" + comboBoxToSelect.getSelectedIndex() + "\n");
+                    infoTextArea.append("End Time: " + choosenMachine.getEndTime() + "\n");
 
+                    infoTextArea.append("Work Queue: ");
+                    if (choosenMachine.getWorkQueue().size() == 0) {
+                        infoTextArea.append("Free");
+                    } else {
+                        for (Task task : choosenMachine.getWorkQueue()) {
+                            infoTextArea.append(task.job.getID() + " ");
+                        }
                     }
                     infoTextArea.append("\nProperties: ");
-                    if (choosenJob.getProperties().size() == 0) {
+                    if (choosenMachine.getProperties().size() == 0) {
                         infoTextArea.append("None");
                     } else {
-                        for (String property : choosenJob.getProperties()) {
+                        for (String property : choosenMachine.getProperties()) {
                             infoTextArea.append("\n" + property);
                         }
                     }
@@ -798,7 +882,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
         c.weightx = 0.5;
         c.gridx = 1;
         c.gridwidth = 2;
-        c.gridy = 1;
+        c.gridy = 2;
         panel.add(buttonSubmitNode, c);
 
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);

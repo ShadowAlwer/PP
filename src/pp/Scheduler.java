@@ -3,8 +3,6 @@ package pp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  *
@@ -244,7 +242,7 @@ public class Scheduler {
         System.out.println("3 algorytm");
     }
 
-    public void Algorithm4() {
+    public void Algorithm4() throws Exception {
         machines.stream().forEach((machine) -> machine.getWorkQueue().clear());
         ArrayList<Job> queue = new ArrayList<>();
         ArrayList<ScheduledJob> scheduledJobs = new ArrayList<>();
@@ -276,46 +274,46 @@ public class Scheduler {
             }
         }
 
+        int machineCount = machines.size();
         boolean foundMachine = false;
-        Machine tmp;
+        Machine tmp = machineIter.next();
         long endTime;
         for (Job j : queue) {
-
             while (!foundMachine) {
+                if (machineCount == 0) {
+                    throw new Exception("You can't schedule this set of jobs on available machines");
+                }
                 if (!machineIter.hasNext()) {
                     machineIter = machines.iterator();
                 }
                 tmp = machineIter.next();
+                machineCount--;
                 if (isCapable(tmp, j)) {
                     foundMachine = true;
                 }
             }
 
-            if (!machineIter.hasNext()) {
-                machineIter = machines.iterator();
-            }
-            if (machineIter.hasNext()) {
-                if (j.getDepends().isEmpty()) {
-                    tmp = machineIter.next();
-                    tmp.addTask(j, tmp.getEndTime());
-                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
-                } else {
-                    endTime = 0;
-                    for (Job dep : j.getDepends()) {
-                        for (ScheduledJob sj : scheduledJobs) {
-                            if (sj.job.equals(dep) && endTime < sj.endTime) {
-                                endTime = sj.endTime;
-                            }
+            if (j.getDepends().isEmpty()) {
+                tmp.addTask(j, tmp.getEndTime());
+                scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
+            } else {
+                endTime = 0;
+                for (Job dep : j.getDepends()) {
+                    for (ScheduledJob sj : scheduledJobs) {
+                        if (sj.job.equals(dep) && endTime < sj.endTime) {
+                            endTime = sj.endTime;
                         }
                     }
-                    tmp = machineIter.next();
-                    if (endTime < tmp.getEndTime()) {
-                        endTime = tmp.getEndTime();
-                    }
-                    tmp.addTask(j, endTime);
-                    scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
                 }
+
+                if (endTime < tmp.getEndTime()) {
+                    endTime = tmp.getEndTime();
+                }
+                tmp.addTask(j, endTime);
+                scheduledJobs.add(new ScheduledJob(j, tmp.getEndTime()));
             }
+            foundMachine=false;
+            machineCount=machines.size();
         }
     }
 
