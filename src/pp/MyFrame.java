@@ -45,7 +45,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
     private Scheduler scheduler;
     private Jobs jobs;
     private JComboBox<String> comboBoxToDelete;
-    private JComboBox<String> comboBoxToSelect;
+    private JComboBox<String> comboBoxDetails;
     private JComboBox<String> comboBoxAlgorithm;
     private Job choosenJob;
     private Machine choosenMachine;
@@ -348,9 +348,10 @@ public class MyFrame extends JFrame implements ConstansInterface {
 
                 comboBoxFirstNode.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxSecondNode.removeItem(comboBoxToDelete.getSelectedItem());
-                comboBoxToSelect.removeItem(comboBoxToDelete.getSelectedItem());
+                comboBoxDetails.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxToDelete.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxProperties.removeItem(comboBoxToDelete.getSelectedItem());
+                
 
             }
         });
@@ -599,9 +600,9 @@ public class MyFrame extends JFrame implements ConstansInterface {
                     }
 
                     if (radioButtonMachinesInfo.isSelected()) {
-                        comboBoxToSelect.removeAllItems();
+                        comboBoxDetails.removeAllItems();
                         for (int i = 0; i < scheduler.getMachines().size(); i++) {
-                            comboBoxToSelect.addItem("M" + (i + 1));
+                            comboBoxDetails.addItem("M" + (i + 1));
                         }
                     }
                 } catch (NumberFormatException ex) {
@@ -779,21 +780,21 @@ public class MyFrame extends JFrame implements ConstansInterface {
         c.gridy = 0;
         panel.add(newLabelWithFont("Select node: ", 18), c);
 
-        comboBoxToSelect = new JComboBox<>(getJobsNames());
+        comboBoxDetails = new JComboBox<>(getJobsNames());
         //petList.setSelectedIndex(4);
         c.fill = GridBagConstraints.SOUTH;
         c.weightx = 0.5;
         c.gridx = 2;
         c.gridwidth = 1;
         c.gridy = 0;
-        panel.add(comboBoxToSelect, c);
+        panel.add(comboBoxDetails, c);
 
         radioButtonJobsInfo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                comboBoxToSelect.removeAllItems();
+                comboBoxDetails.removeAllItems();
                 for (String n : getJobsNames()) {
-                    comboBoxToSelect.addItem(n);
+                    comboBoxDetails.addItem(n);
                 }
             }
         });
@@ -801,9 +802,9 @@ public class MyFrame extends JFrame implements ConstansInterface {
         radioButtonMachinesInfo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                comboBoxToSelect.removeAllItems();
+                comboBoxDetails.removeAllItems();
                 for (int i = 0; i < scheduler.getMachines().size(); i++) {
-                    comboBoxToSelect.addItem("M" + (i + 1));
+                    comboBoxDetails.addItem("M" + (i + 1));
                 }
             }
         });
@@ -827,7 +828,7 @@ public class MyFrame extends JFrame implements ConstansInterface {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (radioButtonJobsInfo.isSelected()) {
-                    choosenJob = jobs.findJobByID((String) comboBoxToSelect.getSelectedItem());
+                    choosenJob = jobs.findJobByID((String) comboBoxDetails.getSelectedItem());
                     if (choosenJob != null) {
                         infoTextArea.setText("");
                         infoTextArea.append("Job ID: " + choosenJob.getID() + "\n");
@@ -853,9 +854,9 @@ public class MyFrame extends JFrame implements ConstansInterface {
                         }
                     }
                 } else {
-                    choosenMachine = scheduler.getMachines().get(comboBoxToSelect.getSelectedIndex());
+                    choosenMachine = scheduler.getMachines().get(comboBoxDetails.getSelectedIndex());
                     infoTextArea.setText("");
-                    infoTextArea.append("Machine ID: M" + comboBoxToSelect.getSelectedIndex() + "\n");
+                    infoTextArea.append("Machine ID: M" + comboBoxDetails.getSelectedIndex() + "\n");
                     infoTextArea.append("End Time: " + choosenMachine.getEndTime() + "\n");
 
                     infoTextArea.append("Work Queue: ");
