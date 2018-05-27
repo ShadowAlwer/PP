@@ -349,8 +349,9 @@ public class MyFrame extends JFrame implements ConstansInterface {
                 comboBoxFirstNode.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxSecondNode.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxDetails.removeItem(comboBoxToDelete.getSelectedItem());
-                comboBoxToDelete.removeItem(comboBoxToDelete.getSelectedItem());
                 comboBoxProperties.removeItem(comboBoxToDelete.getSelectedItem());
+                comboBoxToDelete.removeItem(comboBoxToDelete.getSelectedItem());
+                
                 
 
             }
