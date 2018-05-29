@@ -12,11 +12,13 @@ public class Job {
     private final long executionTime;
     private final String ID;
     private int level;
+    private final ArrayList<String> requirements;
 
     public Job(ArrayList<Job> d, long e, String id) {
         this.depends = d;
         this.executionTime = e;
         this.ID = id;
+        this.requirements=new ArrayList<>();
     }
 
     public void setLevel(int level) {
@@ -55,6 +57,18 @@ public class Job {
 
     public void removeDependency(Job job) {
         depends.remove(job);
+    }
+    
+    public void addRequirement(String property){
+        requirements.add(property);
+    }
+    
+    public void removeRequirement(String property){
+        requirements.remove(property);
+    }
+    
+    public ArrayList<String> getRequirements(){
+        return requirements;
     }
 
 }
