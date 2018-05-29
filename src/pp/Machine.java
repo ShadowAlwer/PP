@@ -20,11 +20,11 @@ public class Machine {
     }
 
     private final ArrayList<Task> workQueue;
-    private final ArrayList<String> properties;
+    private final ArrayList<String> implement;
   
     Machine() {
         workQueue = new ArrayList<>();
-        this.properties=new ArrayList<>();
+        this.implement=new ArrayList<>();
     }
 
     public ArrayList<Task> getWorkQueue() {
@@ -43,17 +43,17 @@ public class Machine {
         return last.startTime + last.job.getExecutionTime();
     }
     
-    public void addProperty(String property){
-        properties.add(property);
+    public void addImplementation(String property){
+        implement.add(property);
         
      }
     
-    public void removeProperty(String property){
-        properties.remove(property);
+    public void removeImplementation(String property){
+        implement.remove(property);
     }
     
-    public ArrayList<String> getProperties(){
-        return properties;
+    public ArrayList<String> getImplementations(){
+        return implement;
     }
     
 }

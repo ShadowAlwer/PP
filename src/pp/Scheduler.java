@@ -359,16 +359,16 @@ public class Scheduler {
 
     private boolean isCapable(Machine machine, Job job) {
 
-        if (job.getProperties().size() == 0) {
+        if (job.getRequirements().size() == 0) {
             return true;
         }
 
-        if (machine.getProperties().size() == 0) {
+        if (machine.getImplementations().size() == 0) {
             return false;
         }
 
-        for (String property : job.getProperties()) {
-            if (!machine.getProperties().contains(property)) {
+        for (String property : job.getRequirements()) {
+            if (!machine.getImplementations().contains(property)) {
                 return false;
             }
         }
